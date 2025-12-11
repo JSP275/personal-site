@@ -1,236 +1,272 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JSP275의 98 스타일 사이트</title>
-<style>
-body {
-  background: linear-gradient(120deg, #008080, #004080);
-  font-family: 'MS Sans Serif', sans-serif;
-  margin: 0;
-  padding: 16px;
-}
-.win {
-  background: #c0c0c0;
-  border: 2px solid #fff;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
-  box-shadow: 2px 2px 0 #000;
-  margin-bottom: 16px;
-}
-.title {
-  background: linear-gradient(90deg, #000080, #0000e0);
-  color: white;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-}
-.controls button {
-  margin-left: 4px;
-  width: 16px; height: 16px;
-  background: #c0c0c0;
-  border: 1px solid #404040;
-}
-.content {
-  padding: 8px;
-  font-size: 14px;
-}
-h2 { margin: 0 0 4px; font-size: 16px; }
-ul { margin: 4px 0; padding-left: 20px; }
-.button-row { margin-top: 8px; }
-.button {
-  background: #e0e0e0;
-  border: 2px solid #fff;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
-  padding: 2px 6px;
-  margin-right: 6px;
-  font-size: 13px;
-  cursor: pointer;
-}
-.start-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 32px;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left-color: #fff;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-  box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 #000;
-}
-.start-button {
-  background: linear-gradient(90deg, #007000, #00b000);
-  color: white;
-  border: 2px solid #fff;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
-  padding: 0 12px;
-  margin-right: 6px;
-  font-size: 14px;
-  cursor: pointer;
-}
-.task {
-  background: #e0e0e0;
-  border: 2px solid #fff;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
-  padding: 2px 10px;
-  margin-right: 4px;
-  font-size: 13px;
-}
-.clock { margin-left: auto; padding: 0 10px; }
-.start-menu {
-  position: fixed;
-  bottom: 32px;
-  left: 0;
-  width: 160px;
-  background: #c0c0c0;
-  border: 2px solid #808080;
-  box-shadow: 2px 2px 0 #000;
-  padding: 6px;
-  display: none;
-}
-.start-menu a {
-  display: block;
-  padding: 4px;
-  color: #000;
-  text-decoration: none;
-}
-.start-menu a:hover {
-  background: #000080;
-  color: #fff;
-}
-.game-buttons {
-  margin-top: 8px;
-}
-.game-buttons button {
-  margin-right: 4px;
-  padding: 2px 6px;
-  border: 2px solid #fff;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
-  background: #e0e0e0;
-  cursor: pointer;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSP275의 98 스타일 사이트</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'MS Sans Serif', 'Arial', sans-serif;
+      background: linear-gradient(160deg, #0080c0, #002060);
+      color: #000;
+      min-height: 100vh;
+    }
+    a { color: #000080; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .window {
+      border: 2px solid #ffffff;
+      box-shadow: 2px 2px #000080, -1px -1px #ffffff, -2px -2px #ffffff inset, 1px 1px #000080 inset;
+      background: #c0c0c0;
+      margin: 20px auto;
+      width: 80%;
+    }
+    .title-bar {
+      background: #000080;
+      color: white;
+      padding: 4px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .window-content {
+      padding: 10px;
+      font-size: 14px;
+    }
+    .window-content button {
+      margin-right: 4px;
+      padding: 4px 8px;
+      border: 2px solid #ffffff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      background: #c0c0c0;
+      cursor: pointer;
+    }
+    .window-content button:hover {
+      background: #e0e0e0;
+    }
+    .start-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      box-shadow: 0 -2px #808080;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+    }
+    .start-button {
+      background: #c0c0c0;
+      border: 2px solid #ffffff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      padding: 4px 12px;
+      margin-left: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .start-menu {
+      position: fixed;
+      bottom: 30px;
+      left: 0;
+      width: 200px;
+      background: #c0c0c0;
+      border: 2px solid #ffffff;
+      border-bottom: none;
+      display: none;
+      z-index: 999;
+    }
+    .start-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .start-menu li {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .start-menu li:hover {
+      background: #000080;
+      color: white;
+    }
+    /* Notepad and Todo styles */
+    #notepad, #todo {
+      display: none;
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      z-index: 1500;
+    }
+    #notepad textarea {
+      width: 100%;
+      height: 150px;
+    }
+    #todo input {
+      width: 70%;
+    }
+    #todo button {
+      padding: 4px 6px;
+    }
+    #todo ul {
+      margin-top: 10px;
+      padding-left: 16px;
+    }
+    #todo ul li {
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<div class="win" id="about">
-  <div class="title">
-    <span>About</span>
-    <div class="controls">
-      <button></button><button></button><button></button>
+  <!-- Notepad window -->
+  <div id="notepad" class="window">
+    <div class="title-bar">메모장
+      <span style="float:right; cursor:pointer;" onclick="toggleNotepad()">×</span>
+    </div>
+    <div class="window-content">
+      <textarea></textarea>
     </div>
   </div>
-  <div class="content">
-    <h2>안녕하세요!</h2>
-    <p>이곳은 JSP275의 레트로 개인 사이트입니다.</p>
-    <p>프로젝트, 작업 로그, 음악 등 다양한 내용이 있습니다.</p>
-    <div class="button-row">
-      <span class="button" onclick="scrollToSection('projects')">프로젝트</span>
-      <span class="button" onclick="scrollToSection('now')">지금 듣는 중</span>
+
+  <!-- Todo window -->
+  <div id="todo" class="window">
+    <div class="title-bar">할 일 목록
+      <span style="float:right; cursor:pointer;" onclick="toggleTodo()">×</span>
+    </div>
+    <div class="window-content">
+      <input id="todo-input" /><button onclick="addTodo()">추가</button>
+      <ul id="todo-list"></ul>
     </div>
   </div>
-</div>
-<div class="win" id="projects">
-  <div class="title">
-    <span>Projects</span>
-    <div class="controls">
-      <button></button><button></button><button></button>
+
+  <!-- About -->
+  <div id="about" class="window">
+    <div class="title-bar">About</div>
+    <div class="window-content">
+      <p>안녕하세요, JSP275의 레트로 웹 사이트에 오신 것을 환영합니다! 이 사이트는 윈도우 98의 감성과 프루티거 에어로 감성을 섞어 만든 개인 공간입니다.</p>
+      <p>스크롤을 내려 다른 섹션도 확인해 보세요. 시작 버튼을 누르면 빠르게 이동할 수도 있습니다.</p>
     </div>
   </div>
-  <div class="content">
-    <p>아레 버튼을 누르로 가이바위보 게임을 해보세요!</p>
-    <div class="game-buttons">
-      <button onclick="playRPS('가이')">가이</button>
+
+  <!-- Game Section -->
+  <div id="game" class="window">
+    <div class="title-bar">Game</div>
+    <div class="window-content">
+      <p>아래 버튼을 눌러 가위·바위·보 게임을 해보세요!</p>
+      <button onclick="playRPS('가위')">가위</button>
       <button onclick="playRPS('바위')">바위</button>
       <button onclick="playRPS('보')">보</button>
-    </div>
-    <p id="rps-result"></p>
-  </div>
-</div>
-<div class="win" id="now">
-  <div class="title">
-    <span>Now Playing</span>
-    <div class="controls">
-      <button></button><button></button><button></button>
+      <p id="rps-result" style="margin-top:5px; font-weight:bold;"></p>
     </div>
   </div>
-  <div class="content">
-    <p>요즘 자주 듣는 노래:</p>
+
+  <!-- Now Playing -->
+  <div id="now" class="window">
+    <div class="title-bar">Now Playing</div>
+    <div class="window-content">
+      <p>요즘 듣는 음악과 좋아하는 콘텐츠를 나열할 수 있어요.</p>
+      <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">릭롤 영상 보기</a></p>
+    </div>
+  </div>
+
+  <!-- Links -->
+  <div id="links" class="window">
+    <div class="title-bar">Links</div>
+    <div class="window-content">
+      <p>다른 SNS나 작품을 방문하세요.</p>
+      <ul>
+        <li><a href="#">블로그</a></li>
+        <li><a href="#">게임 페이지</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Start bar and menu -->
+  <div class="start-bar">
+    <div class="start-button" onclick="toggleStartMenu()">시작</div>
+    <div style="margin-left:10px;">JSP275</div>
+    <div style="margin-left:auto; margin-right:10px;" id="clock">00:00</div>
+  </div>
+  <div id="start-menu" class="start-menu">
     <ul>
-      <li>Retro Wave Mix</li>
-      <li>Chill Beats</li>
-      <li>Aero Soundtrack</li>
+      <li onclick="scrollToSection('about')">About</li>
+      <li onclick="scrollToSection('game')">Game</li>
+      <li onclick="scrollToSection('now')">Now Playing</li>
+      <li onclick="scrollToSection('links')">Links</li>
+      <li onclick="toggleNotepad()">메모장</li>
+      <li onclick="toggleTodo()">Todo List</li>
+      <li onclick="toggleTheme()">테마 변경</li>
     </ul>
   </div>
-</div>
-<div class="win" id="contact">
-  <div class="title">
-    <span>Links</span>
-    <div class="controls">
-      <button></button><button></button><button></button>
-    </div>
-  </div>
-  <div class="content">
-    <p>블록: <a href="#">블록 링크</a></p>
-    <p>유트브: <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">채널 링크</a></p>
-  </div>
-</div>
-<div class="start-bar">
-  <div class="start-button" onclick="toggleStartMenu()">시작</div>
-  <div class="task">JSP275의 98 스타일 사이트</div>
-  <div class="clock" id="clock">00:00</div>
-</div>
-<div class="start-menu" id="startMenu">
-  <a href="#" onclick="scrollToSection('about'); toggleStartMenu();">About</a>
-  <a href="#" onclick="scrollToSection('projects'); toggleStartMenu();">Projects</a>
-  <a href="#" onclick="scrollToSection('now'); toggleStartMenu();">Now Playing</a>
-  <a href="#" onclick="scrollToSection('contact'); toggleStartMenu();">Links</a>
-</div>
-<script>
-function updateTime() {
-  const clock = document.getElementById('clock');
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  clock.textContent = h + ':' + m;
-}
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-function toggleStartMenu() {
-  const menu = document.getElementById('startMenu');
-  if (menu.style.display === 'block') {
-    menu.style.display = 'none';
-  } else {
-    menu.style.display = 'block';
-  }
-}
-function playRPS(choice) {
-  const choices = ['가이','바위','보'];
-  const comp = choices[Math.floor(Math.random()*3)];
-  let result;
-  if (choice === comp) result = '\ube44\uae5d\uc5b4\uc694! \ucee8\ud14c\uc704\ud130\ub3c4 ' + comp + '\ub97c \ub0c8\uc2b5\ub2c8\ub2e4.';
-  else if ((choice === '\uac00\uc774' && comp === '\ubcf4') || (choice === '\ubc14\uc704' && comp === '\uac00\uc774') || (choice === '\ubcf4' && comp === '\ubc14\uc704')) {
-    result = '\uc774\uac1c\uc694! \ucee8\ud14c\uc704\ud130\ub294 ' + comp + '\ub97c \ub0c8\uc2b5\ub2c8\ub2e4.';
-  } else {
-    result = '\uc800\uc694! \ucee8\ud14c\uc704\ud130\ub294 ' + comp + '\ub97c \ub0c8\uc2b5\ub2c8\ub2e4.';
-  }
-  document.getElementById('rps-result').textContent = result;
-}
-updateTime();
-setInterval(updateTime, 60000);
-</script>
+
+  <script>
+    function toggleStartMenu() {
+      const menu = document.getElementById('start-menu');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({behavior: 'smooth'});
+      document.getElementById('start-menu').style.display = 'none';
+    }
+    function playRPS(choice) {
+      const choices = ['가위','바위','보'];
+      const comp = choices[Math.floor(Math.random()*3)];
+      let result = '';
+      if (choice === comp) {
+        result = `비겼어요! 컴퓨터도 ${comp}를 냈어요.`;
+      } else if ((choice === '가위' && comp === '보') || (choice === '바위' && comp === '가위') || (choice === '보' && comp === '바위')) {
+        result = `이겼어요! 컴퓨터는 ${comp}를 냈어요.`;
+      } else {
+        result = `졌어요! 컴퓨터는 ${comp}를 냈어요.`;
+      }
+      document.getElementById('rps-result').textContent = result;
+    }
+    function toggleNotepad() {
+      const note = document.getElementById('notepad');
+      note.style.display = (note.style.display === 'block') ? 'none' : 'block';
+      document.getElementById('start-menu').style.display = 'none';
+    }
+    function toggleTodo() {
+      const todo = document.getElementById('todo');
+      todo.style.display = (todo.style.display === 'block') ? 'none' : 'block';
+      document.getElementById('start-menu').style.display = 'none';
+    }
+    function addTodo() {
+      const input = document.getElementById('todo-input');
+      const list = document.getElementById('todo-list');
+      const text = input.value.trim();
+      if (text) {
+        const li = document.createElement('li');
+        li.textContent = text;
+        li.onclick = function(){ this.remove(); };
+        list.appendChild(li);
+        input.value = '';
+      }
+    }
+    let darkTheme = false;
+    function toggleTheme() {
+      darkTheme = !darkTheme;
+      if (darkTheme) {
+        document.body.style.background = 'linear-gradient(160deg, #202020, #404040)';
+      } else {
+        document.body.style.background = 'linear-gradient(160deg, #0080c0, #002060)';
+      }
+      document.getElementById('start-menu').style.display = 'none';
+    }
+    function updateClock() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      document.getElementById('clock').textContent = hh + ':' + mm;
+    }
+    updateClock();
+    setInterval(updateClock, 60000);
+  </script>
 </body>
 </html>
