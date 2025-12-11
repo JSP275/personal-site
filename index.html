@@ -1,4 +1,4 @@
-e<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
@@ -19,13 +19,43 @@ e<!DOCTYPE html>
   }
 
   /* 창 기본 스타일: 두꺼운 테두리와 3D 음영 */
-  .window, .floating-window {
+  /* 기본 윈도우 스타일: 일반 페이지 섹션(.window)과 모달 창(.floating-window)를 분리합니다.
+     .window는 세로로 긴 레이아웃을 위해 최대 폭을 줄이고 페이지 중앙에 배치하고,
+     .floating-window는 고정 위치이며 개별 스타일 속성을 사용합니다. */
+  .window {
     border: 2px solid #000;
     box-shadow: inset -2px -2px 0 #000080, inset 2px 2px 0 #f0f0f0;
     background: #c0c0c0;
     margin: 20px auto;
-    max-width: 800px;
-    width: 90%;
+    /* Reduce the maximum width to avoid overly wide layouts on large screens */
+    max-width: 550px;
+    width: 95%;
+  }
+  .floating-window {
+    border: 2px solid #000;
+    box-shadow: inset -2px -2px 0 #000080, inset 2px 2px 0 #f0f0f0;
+    background: #c0c0c0;
+    /* 위치와 크기는 개별 style 속성으로 제어 */
+  }
+
+  /* 각 주요 섹션별 색상 포인트를 주기 위해 title-bar 색상을 구분합니다 */
+  .about-window .title-bar {
+    background: linear-gradient(to right, #000080, #0046b3);
+  }
+  .game-window .title-bar {
+    background: linear-gradient(to right, #006400, #008000);
+  }
+  .now-window .title-bar {
+    background: linear-gradient(to right, #4B0082, #800080);
+  }
+  .links-window .title-bar {
+    background: linear-gradient(to right, #8B4513, #D2691E);
+  }
+
+  /* 그림판 캔버스 테두리와 배경을 눈에 잘 띄도록 설정 */
+  #drawCanvas {
+    border: 2px inset #808080;
+    background: #ffffff;
   }
 
   /* 제목 표시줄: 왼쪽에는 아이콘과 제목, 오른쪽에는 버튼 영역 */
@@ -192,17 +222,17 @@ e<!DOCTYPE html>
 </style>
 </head>
 <body>
-  <div class="window" id="about">
+  <div class="window about-window" id="about">
     <div class="title-bar">
       <span>[A] About</span>
       <div class="buttons"></div>
     </div>
     <div class="window-content">
-      <p>안녕하세요! 이 사이트는 Windows 98 느낌과 프루티거 에어로 감성을 섞은 JSP275의 개인 공간입니다. 클래식 UI를 스크롤하며 탐험해 보세요.</p>
+      <p>JSP275의 개인적인 공간입니다.</p>
     </div>
   </div>
 
-  <div class="window" id="game">
+  <div class="window game-window" id="game">
     <div class="title-bar">
       <span>[G] Game</span>
       <div class="buttons"></div>
@@ -216,7 +246,7 @@ e<!DOCTYPE html>
     </div>
   </div>
 
-  <div class="window" id="now">
+  <div class="window now-window" id="now">
     <div class="title-bar">
       <span>[N] Now Playing</span>
       <div class="buttons"></div>
@@ -231,7 +261,7 @@ e<!DOCTYPE html>
     </div>
   </div>
 
-  <div class="window" id="links">
+  <div class="window links-window" id="links">
     <div class="title-bar">
       <span>[L] Links</span>
       <div class="buttons"></div>
@@ -247,7 +277,8 @@ e<!DOCTYPE html>
   </div>
 
     <!-- 블로그 목록 창 -->
-  <div class="floating-window" id="blogWindow" style="position: fixed; top: 100px; right: 20px; width: 230px; display: block;">
+  <!-- 블로그 목록 창. 처음에는 보이지 않도록 display: none 설정 -->
+  <div class="floating-window" id="blogWindow" style="position: fixed; top: 100px; right: 20px; width: 240px; display: none;">
     <div class="title-bar">
       <span>[B] Blog</span>
       <div class="buttons"></div>
@@ -277,7 +308,7 @@ e<!DOCTYPE html>
   </div>
 
   <!-- 메모장 -->
-  <div class="floating-window" id="notepadWindow">
+  <div class="floating-window" id="notepadWindow" style="width: 300px;">
     <div class="title-bar">
       <span>[M] 메모장</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('notepadWindow')">X</button></div>
@@ -288,7 +319,7 @@ e<!DOCTYPE html>
   </div>
 
   <!-- 할 일 목록 -->
-  <div class="floating-window" id="todoWindow">
+  <div class="floating-window" id="todoWindow" style="width: 300px;">
     <div class="title-bar">
       <span>[T] 할 일 목록</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('todoWindow')">X</button></div>
@@ -301,7 +332,7 @@ e<!DOCTYPE html>
   </div>
 
   <!-- 계산기 -->
-  <div class="floating-window" id="calcWindow">
+  <div class="floating-window" id="calcWindow" style="width: 220px;">
     <div class="title-bar">
       <span>[C] 계산기</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('calcWindow')">X</button></div>
@@ -337,19 +368,32 @@ e<!DOCTYPE html>
   </div>
 
   <!-- 그림판 -->
-  <div class="floating-window" id="drawWindow">
+  <div class="floating-window" id="drawWindow" style="width: 360px;">
     <div class="title-bar">
       <span>[P] 그림판</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('drawWindow')">X</button></div>
     </div>
     <div class="window-content">
-      <canvas id="drawCanvas" width="260" height="150"></canvas>
+      <canvas id="drawCanvas" width="300" height="200"></canvas>
+
+<div class="palette">
+  <button onclick="setDrawColor('#000000')" style="background:#000000; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <button onclick="setDrawColor('#FF0000')" style="background:#FF0000; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <button onclick="setDrawColor('#00FF00')" style="background:#00FF00; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <button onclick="setDrawColor('#0000FF')" style="background:#0000FF; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <button onclick="setDrawColor('#FFFF00')" style="background:#FFFF00; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <!-- 추가 색상: 보라, 주황, 시안, 핑크 -->
+  <button onclick="setDrawColor('#800080')" style="background:#800080; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <button onclick="setDrawColor('#FFA500')" style="background:#FFA500; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <button onclick="setDrawColor('#00FFFF')" style="background:#00FFFF; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+  <button onclick="setDrawColor('#FF00FF')" style="background:#FF00FF; width:16px; height:16px; margin:2px; border:1px solid #404040;"></button>
+</div>
       <button onclick="clearCanvas()">지우기</button>
     </div>
   </div>
 
     <!-- 블로그 글 보기 창 -->
-  <div class="floating-window" id="postWindow" style="position: fixed; top: 120px; right: 270px; width: 300px; display: none;">
+  <div class="floating-window" id="postWindow" style="position: fixed; top: 120px; right: 270px; width: 320px; display: none;">
     <div class="title-bar">
       <span id="postTitle">글 제목</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('postWindow')">X</button></div>
@@ -375,11 +419,20 @@ e<!DOCTYPE html>
   let drawing = false;
   let lastX = 0, lastY = 0;
 
+// 드로잉 색상 관리
+let drawColor = '#000000';
+function setDrawColor(color) {
+  drawColor = color;
+}
+
+
   // 블로그 글 목록과 열기 함수
   const posts = [
-    {title: '첫 번째 글', content: '여기에 첫 번째 글의 내용이 들어갑니다. 재미있는 이야기나 개발 일지를 적어보세요.'},
-    {title: '두 번째 글', content: '두 번째 글의 내용입니다. 새로운 게임 개발 아이디어나 일지를 써보세요.'},
-    {title: '세 번째 글', content: '세 번째 글의 내용입니다. 프로젝트 후기나 공부한 내용을 공유하세요.'}
+    {title: '첫 번째 글', content: '행복은 습관이다. 그것을 몸에 지니라. - 엘버트 허버드'},
+    {title: '두 번째 글', content: '모든 위대한 것들은 작은 시작에서 비롯된다. - 플라톤'},
+    {title: '세 번째 글', content: '우리는 변화를 두려워하지 말아야 한다. - 톨스토이'},
+    {title: '네 번째 글', content: '지식은 힘이다. - 프랜시스 베이컨'},
+    {title: '다섯 번째 글', content: '길을 잃는다는 것은 곧 새로운 길을 찾는 것이다. - 톨스토이'}
   ];
   function openPost(index) {
     const post = posts[index];
@@ -517,8 +570,11 @@ e<!DOCTYPE html>
   function initCanvas() {
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = drawColor;
     canvas.addEventListener('mousedown', function(e){ drawing = true; [lastX,lastY] = getPos(e, canvas); });
-    canvas.addEventListener('mousemove', function(e){ if (!drawing) return; const [x,y] = getPos(e, canvas); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY] = [x,y]; });
+    canvas.addEventListener('mousemove', function(e){ if (!drawing) return; const [x,y] = getPos(e, canvas); ctx.strokeStyle = drawColor;
+      ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY] = [x,y]; });
     canvas.addEventListener('mouseup', () => drawing = false);
     canvas.addEventListener('mouseleave', () => drawing = false);
   }
@@ -532,11 +588,46 @@ e<!DOCTYPE html>
     ctx.clearRect(0,0,canvas.width,canvas.height);
   }
 
+  
+// 창 이동을 위한 드래그 기능
+function makeDraggable(el) {
+  const title = el.querySelector('.title-bar');
+  if (!title) return;
+  let isDragging = false;
+  let offsetX = 0, offsetY = 0;
+  title.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    const rect = el.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+  function onMove(e) {
+    if (!isDragging) return;
+    el.style.left = (e.clientX - offsetX) + 'px';
+    el.style.top = (e.clientY - offsetY) + 'px';
+    el.style.position = 'absolute';
+    el.style.zIndex = '1000';
+  }
+  function onUp() {
+    isDragging = false;
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+  }
+}
+function initDraggables() {
+  document.querySelectorAll('.floating-window, .window').forEach((el) => {
+    makeDraggable(el);
+  });
+}
+
   // 페이지 로드 시 초기화
   window.onload = () => {
     loadNote();
     loadTodos();
     initCanvas();
+    initDraggables();
   };
   </script>
 </body>
