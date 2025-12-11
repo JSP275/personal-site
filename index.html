@@ -3,560 +3,499 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>JSP275 98 스타일 사이트</title>
+<title>JSP275 개인 사이트</title>
 <style>
-body {
-  margin:0;
-  padding:0;
-  font-family:Arial, sans-serif;
-  min-height:100vh;
-  background:linear-gradient(to bottom,#c0d0e0,#90a0b0);
-  color:#000;
-}
-.window {
-  border:2px solid #000;
-  background:#c0c0c0;
-  margin:20px auto;
-  width:80%;
-  max-width:800px;
-  box-shadow:inset -2px -2px 0 #000080, inset 2px 2px 0 #f0f0f0;
-}
-.titlebar {
-  background:#000080;
-  color:#fff;
-  padding:4px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-weight:bold;
-}
-.titlebar .buttons button {
-  width:14px;
-  height:14px;
-  border:2px solid #fff;
-  background:#c0c0c0;
-  margin-left:4px;
-  cursor:pointer;
-}
-.window-content {
-  padding:10px;
-  background:#dcdcdc;
-  border-top:2px solid #fff;
-  border-left:2px solid #fff;
-  border-bottom:2px solid #808080;
-  border-right:2px solid #808080;
-}
-.group {
-  margin-bottom:14px;
-  padding:8px;
-  background:#e0e0e0;
-  border:2px solid #808080;
-}
-.group legend {
-  padding:0 4px;
-  font-weight:bold;
-}
-.startbar {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  height:28px;
-  background:#c0c0c0;
-  border-top:2px solid #fff;
-  border-bottom:2px solid #808080;
-  display:flex;
-  align-items:center;
-  padding:2px 4px;
-  z-index:1000;
-}
-.start-button {
-  background:#007800;
-  color:#fff;
-  border:2px solid #fff;
-  padding:2px 8px;
-  font-weight:bold;
-  margin-right:8px;
-  cursor:pointer;
-}
-.start-menu {
-  position:fixed;
-  bottom:28px;
-  left:0;
-  width:200px;
-  background:#e0e0e0;
-  border:2px solid #808080;
-  border-top:none;
-  display:none;
-  z-index:1001;
-}
-.start-menu ul {
-  list-style:none;
-  margin:0;
-  padding:4px 0;
-}
-.start-menu li {
-  padding:4px 12px;
-  cursor:pointer;
-}
-.start-menu li:hover {
-  background:#c0d0e0;
-}
-.floating {
-  position:fixed;
-  top:80px;
-  right:30px;
-  width:320px;
-  background:#c0c0c0;
-  border:2px solid #000;
-  box-shadow:inset -2px -2px 0 #000080, inset 2px 2px 0 #f0f0f0;
-  display:none;
-  z-index:1002;
-}
-.floating-title {
-  background:#000080;
-  color:#fff;
-  padding:4px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:bold;
-}
-.floating-title button {
-  background:#c0c0c0;
-  border:2px solid #fff;
-  width:14px;
-  height:14px;
-  cursor:pointer;
-}
-.floating-content {
-  padding:8px;
-  background:#dcdcdc;
-  border-top:2px solid #fff;
-  border-left:2px solid #fff;
-  border-bottom:2px solid #808080;
-  border-right:2px solid #808080;
-}
-button {
-  font-family:inherit;
-  cursor:pointer;
-}
-.rps-buttons button {
-  margin-right:4px;
-  margin-top:4px;
-}
-.todo-item {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:4px;
-}
-.tictac-board {
-  display:grid;
-  grid-template-columns:repeat(3,60px);
-}
-.tictac-cell {
-  width:60px;
-  height:60px;
-  border:2px solid #000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  cursor:pointer;
-}
-.canvas-board {
-  border:2px solid #000;
-  background:#fff;
-  cursor:crosshair;
-}
-.color-palette button {
-  width:20px;
-  height:20px;
-  border:1px solid #000;
-  margin-right:4px;
-}
-.dark-theme {
-  background:linear-gradient(to bottom,#202020,#405060);
-  color:#fff;
-}
-.dark-theme .window {
-  background:#303030;
-  border-color:#fff;
-  box-shadow:inset -2px -2px 0 #506090, inset 2px 2px 0 #101010;
-}
-.dark-theme .titlebar {
-  background:#0040a0;
-  color:#fff;
-}
-.dark-theme .window-content {
-  background:#404040;
-  border-top-color:#101010;
-  border-left-color:#101010;
-  border-bottom-color:#808080;
-  border-right-color:#808080;
-}
-.dark-theme .startbar {
-  background:#404040;
-}
-.dark-theme .start-button {
-  background:#006000;
-}
-.dark-theme .start-menu {
-  background:#505050;
-}
-.dark-theme .floating {
-  background:#303030;
-}
-.dark-theme .floating-title {
-  background:#0040a0;
-}
-.dark-theme .floating-content {
-  background:#404040;
-}
+  /* 전체 배경을 클래식 98 스타일에 맞춰 줄무늬와 그라디언트로 꾸밉니다 */
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: "MS Sans Serif", Arial, sans-serif;
+    /* 반복되는 대각선 줄무늬와 아래쪽으로 이어지는 푸른 그라디언트 */
+    background:
+      repeating-linear-gradient(45deg, #dcdcdc 0 10px, #c0c0c0 10px 20px),
+      linear-gradient(to bottom, #0067ac, #134a7c);
+    color: #000;
+  }
+
+  /* 창 기본 스타일: 두꺼운 테두리와 3D 음영 */
+  .window, .floating-window {
+    border: 2px solid #000;
+    box-shadow: inset -2px -2px 0 #000080, inset 2px 2px 0 #f0f0f0;
+    background: #c0c0c0;
+    margin: 20px auto;
+    max-width: 800px;
+    width: 90%;
+  }
+
+  /* 제목 표시줄: 왼쪽에는 아이콘과 제목, 오른쪽에는 버튼 영역 */
+  .title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to right, #000080, #0046b3);
+    color: #fff;
+    padding: 4px 6px;
+    font-size: 14px;
+  }
+  .title-bar span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .title-bar .buttons {
+    display: flex;
+    gap: 2px;
+  }
+  .title-bar .btn {
+    width: 16px;
+    height: 14px;
+    border: 1px solid #fff;
+    background: #c0c0c0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* 창 내용 영역 */
+  .window-content {
+    padding: 10px;
+    background: #dcdcdc;
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+  }
+
+  /* 기본 버튼 스타일 */
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 2px 8px;
+    margin: 2px;
+    border: 2px solid #000;
+    background: #e0e0e0;
+    box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
+    cursor: pointer;
+  }
+  button:active {
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+  }
+
+  /* 텍스트 입력과 textarea */
+  input[type="text"], textarea {
+    width: calc(100% - 20px);
+    font-family: inherit;
+    padding: 4px;
+    margin-bottom: 4px;
+    border: 2px inset #808080;
+    background: #fff;
+  }
+
+  /* 작업표시줄 */
+  .taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(to top, #000080, #0046b3);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    font-size: 14px;
+    box-shadow: inset 0 1px 0 #fff;
+  }
+  .start-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #c0c0c0;
+    border: 2px solid #000;
+    padding: 2px 6px;
+    cursor: pointer;
+    box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
+    color: #000;
+  }
+  .start-button:hover {
+    background: #d0d0d0;
+  }
+  .clock {
+    min-width: 50px;
+    text-align: right;
+  }
+
+  /* 시작 메뉴 스타일 */
+  .start-menu {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 200px;
+    background: #c0c0c0;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 #000;
+    display: none;
+    z-index: 100;
+  }
+  .start-menu ul {
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+  }
+  .start-menu li button {
+    width: 100%;
+    text-align: left;
+    padding: 4px 8px;
+    border: none;
+    background: none;
+    font-size: 14px;
+  }
+  .start-menu li button:hover {
+    background: #000080;
+    color: #fff;
+  }
+
+  /* 추가 윈도우 요소들 */
+  .floating-window {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 200;
+  }
+  .floating-window .window-content {
+    background: #dcdcdc;
+  }
+
+  /* 계산기 레이아웃 */
+  .calc-display {
+    padding: 4px;
+    border: 2px inset #808080;
+    background: #fff;
+    margin-bottom: 4px;
+    text-align: right;
+    font-family: "MS Sans Serif", Arial, sans-serif;
+  }
+  .calc-row {
+    display: flex;
+  }
+  .calc-row button {
+    flex: 1;
+  }
+  .calc-row + .calc-row {
+    margin-top: 2px;
+  }
 </style>
 </head>
 <body>
-<!-- About Window -->
-<div class="window" id="about">
-  <div class="titlebar"><span>About</span></div>
-  <div class="window-content">
-    <p>안녕하세요! 이 사이트는 JSP275가 만든 Windows 98 테마 개인 페이지입니다.</p>
-    <p>메모장, 할 일 목록, 계산기, 그림판과 게임을 즐길 수 있어요.</p>
-  </div>
-</div>
-<!-- Game Window -->
-<div class="window" id="game">
-  <div class="titlebar"><span>Game</span></div>
-  <div class="window-content">
-    <fieldset class="group">
-      <legend>가위바위보</legend>
-      <p>아래 버튼을 눌러 가위·바위·보 게임을 해보세요!</p>
-      <div class="rps-buttons">
-        <button onclick="playRPS('가위')">가위</button>
-        <button onclick="playRPS('바위')">바위</button>
-        <button onclick="playRPS('보')">보</button>
-      </div>
-      <p id="rpsResult"></p>
-    </fieldset>
-    <fieldset class="group">
-      <legend>틱택토</legend>
-      <p>빈 칸을 눌러 X를 놓으세요. 컴퓨터는 O 입니다.</p>
-      <div class="tictac-board" id="tictacBoard"></div>
-      <p id="tictacResult"></p>
-      <button onclick="resetTicTac()">다시하기</button>
-    </fieldset>
-  </div>
-</div>
-<!-- Now Playing Window -->
-<div class="window" id="now">
-  <div class="titlebar"><span>Now Playing</span></div>
-  <div class="window-content">
-    <p>현재 듣는 음악:</p>
-    <p>🎵 가상의 플레이리스트</p>
-    <div>
-      <button disabled>⏮</button>
-      <button disabled>▶</button>
-      <button disabled>⏭</button>
+  <div class="window" id="about">
+    <div class="title-bar">
+      <span>ℹ️ About</span>
+      <div class="buttons"></div>
+    </div>
+    <div class="window-content">
+      <p>안녕하세요! 이 사이트는 Windows 98 느낌과 프루티거 에어로 감성을 섞은 JSP275의 개인 공간입니다. 클래식 UI를 스크롤하며 탐험해 보세요.</p>
     </div>
   </div>
-</div>
-<!-- Links Window -->
-<div class="window" id="links">
-  <div class="titlebar"><span>Links</span></div>
-  <div class="window-content">
-    <p>저를 더 알고 싶으신가요?</p>
+
+  <div class="window" id="game">
+    <div class="title-bar">
+      <span>🕹️ Game</span>
+      <div class="buttons"></div>
+    </div>
+    <div class="window-content">
+      <p>아래 버튼을 눌러 가위·바위·보 게임을 해보세요!</p>
+      <p id="rpsResult">결과가 여기에 표시됩니다.</p>
+      <button onclick="playRPS('가위')">가위</button>
+      <button onclick="playRPS('바위')">바위</button>
+      <button onclick="playRPS('보')">보</button>
+    </div>
+  </div>
+
+  <div class="window" id="now">
+    <div class="title-bar">
+      <span>🎵 Now Playing</span>
+      <div class="buttons"></div>
+    </div>
+    <div class="window-content">
+      <p>현재 작업하면서 듣고 있는 음악이나 즐겨 보는 콘텐츠를 공유합니다.</p>
+      <ul>
+        <li>🎧 Aero Groove Mix</li>
+        <li>🎮 Old School Adventure</li>
+        <li>🔗 Retro Tech Blog</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="window" id="links">
+    <div class="title-bar">
+      <span>🔗 Links</span>
+      <div class="buttons"></div>
+    </div>
+    <div class="window-content">
+      <p>다른 플랫폼으로 연결되는 링크입니다.</p>
+      <ul>
+        <li><a href="https://youtu.be/dQw4w9WgXcQ">YouTube (릭롤)</a></li>
+        <li><a href="https://jsp275.github.io">Blog</a></li>
+        <li><a href="https://itch.io">Itch.io</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 시작 메뉴 -->
+  <div class="start-menu" id="startMenu">
     <ul>
-      <li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">유튜브 (릭롤)</a></li>
-      <li><a href="#" target="_blank">블로그</a></li>
-      <li><a href="#" target="_blank">GitHub</a></li>
+      <li><button onclick="scrollToSection('about');toggleStartMenu()">ℹ️ About</button></li>
+      <li><button onclick="scrollToSection('game');toggleStartMenu()">🕹️ Game</button></li>
+      <li><button onclick="scrollToSection('now');toggleStartMenu()">🎵 Now Playing</button></li>
+      <li><button onclick="scrollToSection('links');toggleStartMenu()">🔗 Links</button></li>
+      <li><button onclick="toggleWindow('notepadWindow');toggleStartMenu()">📝 메모장</button></li>
+      <li><button onclick="toggleWindow('todoWindow');toggleStartMenu()">✅ 할 일 목록</button></li>
+      <li><button onclick="toggleWindow('calcWindow');toggleStartMenu()">🧮 계산기</button></li>
+      <li><button onclick="toggleWindow('drawWindow');toggleStartMenu()">🎨 그림판</button></li>
     </ul>
   </div>
-</div>
-<!-- Floating Windows -->
-<div class="floating" id="notepadWindow">
-  <div class="floating-title">
-    <span>메모장</span>
-    <button onclick="toggleWindow('notepadWindow')">X</button>
-  </div>
-  <div class="floating-content">
-    <textarea id="noteArea" style="width:100%;height:200px;"></textarea>
-  </div>
-</div>
-<div class="floating" id="todoWindow">
-  <div class="floating-title">
-    <span>할 일 목록</span>
-    <button onclick="toggleWindow('todoWindow')">X</button>
-  </div>
-  <div class="floating-content">
-    <input type="text" id="todoInput" placeholder="할 일을 입력하세요" />
-    <button onclick="addTodo()">추가</button>
-    <div id="todoList"></div>
-  </div>
-</div>
-<div class="floating" id="calcWindow">
-  <div class="floating-title">
-    <span>계산기</span>
-    <button onclick="toggleWindow('calcWindow')">X</button>
-  </div>
-  <div class="floating-content">
-    <input type="text" id="calcDisplay" readonly style="width:100%;margin-bottom:4px;" />
-    <div class="calc-row">
-      <button onclick="pressKey('7')">7</button>
-      <button onclick="pressKey('8')">8</button>
-      <button onclick="pressKey('9')">9</button>
-      <button onclick="pressKey('/')">/</button>
+
+  <!-- 메모장 -->
+  <div class="floating-window" id="notepadWindow">
+    <div class="title-bar">
+      <span>📝 메모장</span>
+      <div class="buttons"><button class="btn" onclick="closeWindow('notepadWindow')">X</button></div>
     </div>
-    <div class="calc-row">
-      <button onclick="pressKey('4')">4</button>
-      <button onclick="pressKey('5')">5</button>
-      <button onclick="pressKey('6')">6</button>
-      <button onclick="pressKey('*')">*</button>
-    </div>
-    <div class="calc-row">
-      <button onclick="pressKey('1')">1</button>
-      <button onclick="pressKey('2')">2</button>
-      <button onclick="pressKey('3')">3</button>
-      <button onclick="pressKey('-')">-</button>
-    </div>
-    <div class="calc-row">
-      <button onclick="pressKey('0')">0</button>
-      <button onclick="pressKey('.')">.</button>
-      <button onclick="pressKey('C')">C</button>
-      <button onclick="pressKey('+')">+</button>
-    </div>
-    <div class="calc-row">
-      <button onclick="pressKey('=')" style="width:100%;">=</button>
+    <div class="window-content">
+      <textarea id="noteArea" placeholder="여기에 메모를 작성하세요..."></textarea>
     </div>
   </div>
-</div>
-<div class="floating" id="drawWindow">
-  <div class="floating-title">
-    <span>그림판</span>
-    <button onclick="toggleWindow('drawWindow')">X</button>
+
+  <!-- 할 일 목록 -->
+  <div class="floating-window" id="todoWindow">
+    <div class="title-bar">
+      <span>✅ 할 일 목록</span>
+      <div class="buttons"><button class="btn" onclick="closeWindow('todoWindow')">X</button></div>
+    </div>
+    <div class="window-content">
+      <input type="text" id="todoInput" placeholder="할 일을 입력하세요" />
+      <button onclick="addTodo()">추가</button>
+      <ul id="todoList"></ul>
+    </div>
   </div>
-  <div class="floating-content">
-    <canvas id="drawCanvas" width="300" height="200" class="canvas-board"></canvas>
-    <div class="color-palette" style="margin-top:4px;">
-      <button style="background:red" onclick="setDrawColor('red')"></button>
-      <button style="background:blue" onclick="setDrawColor('blue')"></button>
-      <button style="background:green" onclick="setDrawColor('green')"></button>
-      <button style="background:black" onclick="setDrawColor('black')"></button>
+
+  <!-- 계산기 -->
+  <div class="floating-window" id="calcWindow">
+    <div class="title-bar">
+      <span>🧮 계산기</span>
+      <div class="buttons"><button class="btn" onclick="closeWindow('calcWindow')">X</button></div>
+    </div>
+    <div class="window-content">
+      <div class="calc-display" id="calcDisplay">0</div>
+      <div class="calc-row">
+        <button onclick="pressKey('7')">7</button>
+        <button onclick="pressKey('8')">8</button>
+        <button onclick="pressKey('9')">9</button>
+        <button onclick="pressKey('/')">÷</button>
+      </div>
+      <div class="calc-row">
+        <button onclick="pressKey('4')">4</button>
+        <button onclick="pressKey('5')">5</button>
+        <button onclick="pressKey('6')">6</button>
+        <button onclick="pressKey('*')">×</button>
+      </div>
+      <div class="calc-row">
+        <button onclick="pressKey('1')">1</button>
+        <button onclick="pressKey('2')">2</button>
+        <button onclick="pressKey('3')">3</button>
+        <button onclick="pressKey('-')">−</button>
+      </div>
+      <div class="calc-row">
+        <button onclick="pressKey('0')">0</button>
+        <button onclick="pressKey('.')">.</button>
+        <button onclick="calculate()">=</button>
+        <button onclick="pressKey('+')">＋</button>
+      </div>
+      <button style="width:100%" onclick="clearCalc()">초기화</button>
+    </div>
+  </div>
+
+  <!-- 그림판 -->
+  <div class="floating-window" id="drawWindow">
+    <div class="title-bar">
+      <span>🎨 그림판</span>
+      <div class="buttons"><button class="btn" onclick="closeWindow('drawWindow')">X</button></div>
+    </div>
+    <div class="window-content">
+      <canvas id="drawCanvas" width="260" height="150"></canvas>
       <button onclick="clearCanvas()">지우기</button>
     </div>
   </div>
-</div>
-<!-- Start Bar and Menu -->
-<div class="startbar">
-  <div class="start-button" onclick="toggleStartMenu()">Start</div>
-  <div id="startTime" style="margin-left:auto;"></div>
-</div>
-<div class="start-menu" id="startMenu">
-  <ul>
-    <li onclick="scrollToSection('about');toggleStartMenu()">About</li>
-    <li onclick="scrollToSection('game');toggleStartMenu()">Game</li>
-    <li onclick="scrollToSection('now');toggleStartMenu()">Now Playing</li>
-    <li onclick="scrollToSection('links');toggleStartMenu()">Links</li>
-    <li onclick="toggleWindow('notepadWindow');toggleStartMenu()">메모장</li>
-    <li onclick="toggleWindow('todoWindow');toggleStartMenu()">할 일 목록</li>
-    <li onclick="toggleWindow('calcWindow');toggleStartMenu()">계산기</li>
-    <li onclick="toggleWindow('drawWindow');toggleStartMenu()">그림판</li>
-    <li onclick="toggleTheme();toggleStartMenu()">테마 변경</li>
-  </ul>
-</div>
-<script>
-function toggleStartMenu() {
-  const menu = document.getElementById('startMenu');
-  menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-}
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({behavior:'smooth'});
-  }
-}
-function toggleWindow(id) {
-  const w = document.getElementById(id);
-  w.style.display = (w.style.display === 'block') ? 'none' : 'block';
-}
-function playRPS(choice) {
-  const options = ['가위','바위','보'];
-  const comp = options[Math.floor(Math.random()*3)];
-  let result;
-  if (choice === comp) {
-    result = '비겼어요! 컴퓨터도 ' + comp + '!';
-  } else if ((choice==='가위' && comp==='보') || (choice==='바위' && comp==='가위') || (choice==='보' && comp==='바위')) {
-    result = '이겼어요! 컴퓨터는 ' + comp + '!';
-  } else {
-    result = '졌어요! 컴퓨터는 ' + comp + '!';
-  }
-  document.getElementById('rpsResult').innerText = result;
-}
-// TicTacToe
-let tictacBoardState = ['', '', '', '', '', '', '', '', ''];
-let tictacActive = true;
-function renderBoard() {
-  const boardDiv = document.getElementById('tictacBoard');
-  boardDiv.innerHTML = '';
-  tictacBoardState.forEach((cell, idx) => {
-    const div = document.createElement('div');
-    div.className = 'tictac-cell';
-    div.textContent = cell;
-    div.onclick = () => handleMove(idx);
-    boardDiv.appendChild(div);
-  });
-}
-function checkWinner() {
-  const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-  for (const [a,b,c] of wins) {
-    if (tictacBoardState[a] && tictacBoardState[a] === tictacBoardState[b] && tictacBoardState[b] === tictacBoardState[c]) {
-      return tictacBoardState[a];
-    }
-  }
-  if (!tictacBoardState.includes('')) return 'T';
-  return null;
-}
-function handleMove(i) {
-  if (!tictacActive || tictacBoardState[i]) return;
-  tictacBoardState[i] = 'X';
-  renderBoard();
-  let winner = checkWinner();
-  if (winner) {
-    endTicTac(winner);
-    return;
-  }
-  const empty = tictacBoardState.map((v, idx) => v === '' ? idx : null).filter(v => v !== null);
-  if (empty.length) {
-    const j = empty[Math.floor(Math.random()*empty.length)];
-    tictacBoardState[j] = 'O';
-  }
-  renderBoard();
-  winner = checkWinner();
-  if (winner) {
-    endTicTac(winner);
-  }
-}
-function endTicTac(result) {
-  tictacActive = false;
-  document.getElementById('tictacResult').innerText = result === 'T' ? '비겼어요!' : (result === 'X' ? '이겼어요!' : '졌어요!');
-}
-function resetTicTac() {
-  tictacBoardState = ['', '', '', '', '', '', '', '', ''];
-  tictacActive = true;
-  document.getElementById('tictacResult').innerText = '';
-  renderBoard();
-}
-// Notepad localStorage
-function initNote() {
-  const noteArea = document.getElementById('noteArea');
-  noteArea.value = localStorage.getItem('note') || '';
-  noteArea.addEventListener('input', () => {
-    localStorage.setItem('note', noteArea.value);
-  });
-}
-// Todo localStorage
-function renderTodos() {
-  const list = JSON.parse(localStorage.getItem('todos') || '[]');
-  const container = document.getElementById('todoList');
-  container.innerHTML = '';
-  list.forEach((text, idx) => {
-    const div = document.createElement('div');
-    div.className = 'todo-item';
-    const span = document.createElement('span');
-    span.textContent = text;
-    const btn = document.createElement('button');
-    btn.textContent = '삭제';
-    btn.onclick = () => removeTodo(idx);
-    div.appendChild(span);
-    div.appendChild(btn);
-    container.appendChild(div);
-  });
-}
-function addTodo() {
-  const input = document.getElementById('todoInput');
-  const text = input.value.trim();
-  if (!text) return;
-  const list = JSON.parse(localStorage.getItem('todos') || '[]');
-  list.push(text);
-  localStorage.setItem('todos', JSON.stringify(list));
-  input.value = '';
-  renderTodos();
-}
-function removeTodo(idx) {
-  const list = JSON.parse(localStorage.getItem('todos') || '[]');
-  list.splice(idx,1);
-  localStorage.setItem('todos', JSON.stringify(list));
-  renderTodos();
-}
-// Calculator
-let calcBuffer = '';
-function pressKey(key) {
-  if (key === 'C') {
-    calcBuffer = '';
-  } else if (key === '=') {
-    try {
-      calcBuffer = eval(calcBuffer).toString();
-    } catch {
-      calcBuffer = 'Error';
-    }
-  } else {
-    calcBuffer += key;
-  }
-  document.getElementById('calcDisplay').value = calcBuffer;
-}
-// Drawing board
-let drawColor = 'black';
-function setDrawColor(c) {
-  drawColor = c;
-}
-function setupCanvas() {
-  const canvas = document.getElementById('drawCanvas');
-  const ctx = canvas.getContext('2d');
+
+  <!-- 작업표시줄 -->
+  <div class="taskbar">
+    <div class="start-button" onclick="toggleStartMenu()">
+      <span>Start</span>
+    </div>
+    <label>JSP275 개인 사이트</label>
+    <div class="clock" id="clock"></div>
+  </div>
+
+  <script>
+  let startMenuVisible = false;
+  let noteChanged = false;
+  let calcBuffer = '';
   let drawing = false;
-  canvas.addEventListener('mousedown', (e) => {
-    drawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
-  });
-  canvas.addEventListener('mousemove', (e) => {
-    if (drawing) {
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.strokeStyle = drawColor;
-      ctx.lineWidth = 2;
-      ctx.stroke();
+  let lastX = 0, lastY = 0;
+
+  function updateClock() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('clock').innerText = `${hours}:${minutes}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  function toggleStartMenu() {
+    startMenuVisible = !startMenuVisible;
+    document.getElementById('startMenu').style.display = startMenuVisible ? 'block' : 'none';
+  }
+
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function toggleWindow(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    if (id === 'notepadWindow' && el.style.display === 'block') {
+      loadNote();
     }
-  });
-  canvas.addEventListener('mouseup', () => {
-    drawing = false;
-  });
-  canvas.addEventListener('mouseleave', () => {
-    drawing = false;
-  });
-}
-function clearCanvas() {
-  const canvas = document.getElementById('drawCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-// Theme toggle
-function toggleTheme() {
-  document.body.classList.toggle('dark-theme');
-}
-// Clock
-function updateTime() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('startTime').innerText = h + ':' + m;
-}
-setInterval(updateTime, 60000);
-updateTime();
-window.onload = function() {
-  initNote();
-  renderTodos();
-  setupCanvas();
-  renderBoard();
-};
-</script>
+    if (id === 'todoWindow' && el.style.display === 'block') {
+      loadTodos();
+    }
+  }
+  function closeWindow(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  }
+
+  // 가위바위보 게임
+  function playRPS(choice) {
+    const choices = ['가위','바위','보'];
+    const comp = choices[Math.floor(Math.random()*3)];
+    let result;
+    if (choice === comp) result = `비겼어요! 컴퓨터도 ${comp}.`;
+    else if ((choice === '가위' && comp === '보') || (choice === '바위' && comp === '가위') || (choice === '보' && comp === '바위')) result = `이겼어요! 컴퓨터는 ${comp}.`;
+    else result = `졌어요! 컴퓨터는 ${comp}.`;
+    document.getElementById('rpsResult').innerText = result;
+  }
+
+  // 메모장 저장/불러오기
+  function saveNote() {
+    const note = document.getElementById('noteArea').value;
+    localStorage.setItem('note', note);
+  }
+  function loadNote() {
+    const saved = localStorage.getItem('note') || '';
+    document.getElementById('noteArea').value = saved;
+  }
+
+  // 할 일 목록 관리
+  function addTodo() {
+    const input = document.getElementById('todoInput');
+    const text = input.value.trim();
+    if (text) {
+      const list = document.getElementById('todoList');
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.textContent = text;
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '삭제';
+      delBtn.onclick = function() {
+        list.removeChild(li);
+        saveTodos();
+      };
+      li.appendChild(span);
+      li.appendChild(delBtn);
+      list.appendChild(li);
+      input.value = '';
+      saveTodos();
+    }
+  }
+  function saveTodos() {
+    const items = [];
+    document.querySelectorAll('#todoList li span').forEach(span => items.push(span.textContent));
+    localStorage.setItem('todos', JSON.stringify(items));
+  }
+  function loadTodos() {
+    const data = JSON.parse(localStorage.getItem('todos') || '[]');
+    const list = document.getElementById('todoList');
+    list.innerHTML = '';
+    data.forEach(text => {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.textContent = text;
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '삭제';
+      delBtn.onclick = function() {
+        list.removeChild(li);
+        saveTodos();
+      };
+      li.appendChild(span);
+      li.appendChild(delBtn);
+      list.appendChild(li);
+    });
+  }
+
+  // 계산기 기능
+  function pressKey(key) {
+    if (['+','-','*','/','.'].includes(key) && calcBuffer === '') return;
+    calcBuffer += key;
+    document.getElementById('calcDisplay').innerText = calcBuffer;
+  }
+  function calculate() {
+    try {
+      const result = eval(calcBuffer);
+      document.getElementById('calcDisplay').innerText = result;
+      calcBuffer = result.toString();
+    } catch(e) {
+      document.getElementById('calcDisplay').innerText = '오류';
+      calcBuffer = '';
+    }
+  }
+  function clearCalc() {
+    calcBuffer = '';
+    document.getElementById('calcDisplay').innerText = '0';
+  }
+
+  // 그림판 기능
+  function initCanvas() {
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.addEventListener('mousedown', function(e){ drawing = true; [lastX,lastY] = getPos(e, canvas); });
+    canvas.addEventListener('mousemove', function(e){ if (!drawing) return; const [x,y] = getPos(e, canvas); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY] = [x,y]; });
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+  }
+  function getPos(e, canvas) {
+    const rect = canvas.getBoundingClientRect();
+    return [e.clientX - rect.left, e.clientY - rect.top];
+  }
+  function clearCanvas() {
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+
+  // 페이지 로드 시 초기화
+  window.onload = () => {
+    loadNote();
+    loadTodos();
+    initCanvas();
+  };
+  </script>
 </body>
 </html>
