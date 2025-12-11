@@ -8,7 +8,8 @@
     body {
       margin: 0;
       font-family: 'MS Sans Serif', 'Arial', sans-serif;
-      background: linear-gradient(160deg, #0080c0, #002060);
+      /* colorful gradient background with multiple hues */
+      background: linear-gradient(160deg, #0084c2, #4d78c4, #664fa3, #a156b0);
       color: #000;
       min-height: 100vh;
     }
@@ -17,20 +18,10 @@
     .window {
       border: 2px solid #ffffff;
       box-shadow: 2px 2px #000080, -1px -1px #ffffff, -2px -2px #ffffff inset, 1px 1px #000080 inset;
-      background: #c0c0c0;
       margin: 20px auto;
       width: 80%;
     }
-    .title-bar {
-      background: #000080;
-      color: white;
-      padding: 4px 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-      font-size: 14px;
-    }
+    /* base window content */
     .window-content {
       padding: 10px;
       font-size: 14px;
@@ -41,45 +32,88 @@
       border: 2px solid #ffffff;
       border-right: 2px solid #808080;
       border-bottom: 2px solid #808080;
-      background: #c0c0c0;
+      background: #e6e6e6;
       cursor: pointer;
     }
     .window-content button:hover {
-      background: #e0e0e0;
+      background: #f5f5f5;
     }
+    /* window-specific colors */
+    .about .title-bar {
+      background: linear-gradient(90deg, #84c5fc, #3a8efc);
+      color: #001f4d;
+    }
+    .about {
+      background: #f0f7ff;
+    }
+    .game .title-bar {
+      background: linear-gradient(90deg, #a9e8c5, #3ad29f);
+      color: #013524;
+    }
+    .game {
+      background: #f0fff7;
+    }
+    .now .title-bar {
+      background: linear-gradient(90deg, #d0c1ff, #937bda);
+      color: #2d004d;
+    }
+    .now {
+      background: #f7f2ff;
+    }
+    .links .title-bar {
+      background: linear-gradient(90deg, #ffe0b2, #f5983a);
+      color: #4d2c00;
+    }
+    .links {
+      background: #fff8ee;
+    }
+    /* title bar common styles */
+    .title-bar {
+      padding: 4px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+    }
+    /* start bar */
     .start-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      background: #c0c0c0;
+      background: linear-gradient(90deg, #004080, #0060a0);
       border-top: 2px solid #ffffff;
-      box-shadow: 0 -2px #808080;
-      height: 30px;
+      box-shadow: 0 -2px #2e4676;
+      height: 32px;
       display: flex;
       align-items: center;
       z-index: 1000;
+      color: #fff;
     }
     .start-button {
-      background: #c0c0c0;
+      background: #c0d7ff;
       border: 2px solid #ffffff;
-      border-right: 2px solid #808080;
-      border-bottom: 2px solid #808080;
+      border-right: 2px solid #829acf;
+      border-bottom: 2px solid #829acf;
       padding: 4px 12px;
       margin-left: 4px;
       font-weight: bold;
+      color: #003064;
       cursor: pointer;
     }
     .start-menu {
       position: fixed;
-      bottom: 30px;
+      bottom: 32px;
       left: 0;
-      width: 200px;
-      background: #c0c0c0;
+      width: 220px;
+      background: #f0f0f0;
       border: 2px solid #ffffff;
       border-bottom: none;
       display: none;
       z-index: 999;
+      box-shadow: 2px -2px 8px rgba(0,0,0,0.3);
     }
     .start-menu ul {
       list-style: none;
@@ -87,26 +121,26 @@
       padding: 0;
     }
     .start-menu li {
-      padding: 6px 10px;
+      padding: 8px 12px;
       cursor: pointer;
     }
     .start-menu li:hover {
-      background: #000080;
-      color: white;
+      background: #cbdffa;
+      color: #003064;
     }
-    /* Notepad and Todo styles */
+    /* Notepad and Todo windows styling */
     #notepad, #todo {
       display: none;
       position: fixed;
       top: 60px;
       left: 50%;
       transform: translateX(-50%);
-      width: 300px;
+      width: 320px;
       z-index: 1500;
     }
     #notepad textarea {
       width: 100%;
-      height: 150px;
+      height: 170px;
     }
     #todo input {
       width: 70%;
@@ -125,7 +159,7 @@
 </head>
 <body>
   <!-- Notepad window -->
-  <div id="notepad" class="window">
+  <div id="notepad" class="window about">
     <div class="title-bar">메모장
       <span style="float:right; cursor:pointer;" onclick="toggleNotepad()">×</span>
     </div>
@@ -135,7 +169,7 @@
   </div>
 
   <!-- Todo window -->
-  <div id="todo" class="window">
+  <div id="todo" class="window about">
     <div class="title-bar">할 일 목록
       <span style="float:right; cursor:pointer;" onclick="toggleTodo()">×</span>
     </div>
@@ -146,16 +180,16 @@
   </div>
 
   <!-- About -->
-  <div id="about" class="window">
+  <div id="about" class="window about">
     <div class="title-bar">About</div>
     <div class="window-content">
-      <p>안녕하세요, JSP275의 레트로 웹 사이트에 오신 것을 환영합니다! 이 사이트는 윈도우 98의 감성과 프루티거 에어로 감성을 섞어 만든 개인 공간입니다.</p>
+      <p>안녕하세요, JSP275의 컬러풀 레트로 웹 사이트에 오신 것을 환영합니다! 이 사이트는 윈도우 98의 감성에 다채로운 색을 더한 개인 공간입니다.</p>
       <p>스크롤을 내려 다른 섹션도 확인해 보세요. 시작 버튼을 누르면 빠르게 이동할 수도 있습니다.</p>
     </div>
   </div>
 
   <!-- Game Section -->
-  <div id="game" class="window">
+  <div id="game" class="window game">
     <div class="title-bar">Game</div>
     <div class="window-content">
       <p>아래 버튼을 눌러 가위·바위·보 게임을 해보세요!</p>
@@ -167,7 +201,7 @@
   </div>
 
   <!-- Now Playing -->
-  <div id="now" class="window">
+  <div id="now" class="window now">
     <div class="title-bar">Now Playing</div>
     <div class="window-content">
       <p>요즘 듣는 음악과 좋아하는 콘텐츠를 나열할 수 있어요.</p>
@@ -176,7 +210,7 @@
   </div>
 
   <!-- Links -->
-  <div id="links" class="window">
+  <div id="links" class="window links">
     <div class="title-bar">Links</div>
     <div class="window-content">
       <p>다른 SNS나 작품을 방문하세요.</p>
@@ -255,7 +289,7 @@
       if (darkTheme) {
         document.body.style.background = 'linear-gradient(160deg, #202020, #404040)';
       } else {
-        document.body.style.background = 'linear-gradient(160deg, #0080c0, #002060)';
+        document.body.style.background = 'linear-gradient(160deg, #0084c2, #4d78c4, #664fa3, #a156b0)';
       }
       document.getElementById('start-menu').style.display = 'none';
     }
