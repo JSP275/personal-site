@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>아스트어의 98 스타일 사이트</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSP275의 98 스타일 사이트</title>
 <style>
 body {
   background: linear-gradient(120deg, #008080, #004080);
@@ -49,6 +49,7 @@ ul { margin: 4px 0; padding-left: 20px; }
   padding: 2px 6px;
   margin-right: 6px;
   font-size: 13px;
+  cursor: pointer;
 }
 .start-bar {
   position: fixed;
@@ -73,6 +74,7 @@ ul { margin: 4px 0; padding-left: 20px; }
   padding: 0 12px;
   margin-right: 6px;
   font-size: 14px;
+  cursor: pointer;
 }
 .task {
   background: #e0e0e0;
@@ -84,10 +86,43 @@ ul { margin: 4px 0; padding-left: 20px; }
   font-size: 13px;
 }
 .clock { margin-left: auto; padding: 0 10px; }
+.start-menu {
+  position: fixed;
+  bottom: 32px;
+  left: 0;
+  width: 160px;
+  background: #c0c0c0;
+  border: 2px solid #808080;
+  box-shadow: 2px 2px 0 #000;
+  padding: 6px;
+  display: none;
+}
+.start-menu a {
+  display: block;
+  padding: 4px;
+  color: #000;
+  text-decoration: none;
+}
+.start-menu a:hover {
+  background: #000080;
+  color: #fff;
+}
+.game-buttons {
+  margin-top: 8px;
+}
+.game-buttons button {
+  margin-right: 4px;
+  padding: 2px 6px;
+  border: 2px solid #fff;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  background: #e0e0e0;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
-<div class="win">
+<div class="win" id="about">
   <div class="title">
     <span>About</span>
     <div class="controls">
@@ -96,15 +131,15 @@ ul { margin: 4px 0; padding-left: 20px; }
   </div>
   <div class="content">
     <h2>안녕하세요!</h2>
-    <p>이곳은 아스트어의 레트로 개인 사이트입니다.</p>
+    <p>이곳은 JSP275의 레트로 개인 사이트입니다.</p>
     <p>프로젝트, 작업 로그, 음악 등 다양한 내용이 있습니다.</p>
     <div class="button-row">
-      <span class="button">프로젝트</span>
-      <span class="button">블록폴</span>
+      <span class="button" onclick="scrollToSection('projects')">프로젝트</span>
+      <span class="button" onclick="scrollToSection('now')">지금 듣는 중</span>
     </div>
   </div>
 </div>
-<div class="win">
+<div class="win" id="projects">
   <div class="title">
     <span>Projects</span>
     <div class="controls">
@@ -112,15 +147,16 @@ ul { margin: 4px 0; padding-left: 20px; }
     </div>
   </div>
   <div class="content">
-    <p>인디 게임과 프로토타임을 만들는 것을 좋아해요.</p>
-    <ul>
-      <li>게임 A - 판타지 RPG</li>
-      <li>게임 B - 퍼즐 게임</li>
-      <li>더 많은 프로젝트는 블록에서 확인하세요.</li>
-    </ul>
+    <p>아레 버튼을 누르로 가이바위보 게임을 해보세요!</p>
+    <div class="game-buttons">
+      <button onclick="playRPS('가이')">가이</button>
+      <button onclick="playRPS('바위')">바위</button>
+      <button onclick="playRPS('보')">보</button>
+    </div>
+    <p id="rps-result"></p>
   </div>
 </div>
-<div class="win">
+<div class="win" id="now">
   <div class="title">
     <span>Now Playing</span>
     <div class="controls">
@@ -136,34 +172,65 @@ ul { margin: 4px 0; padding-left: 20px; }
     </ul>
   </div>
 </div>
-<div class="win">
+<div class="win" id="contact">
   <div class="title">
-    <span>Contact & Links</span>
+    <span>Links</span>
     <div class="controls">
       <button></button><button></button><button></button>
     </div>
   </div>
   <div class="content">
-    <p>메일: <a href="mailto:example@example.com">example@example.com</a></p>
     <p>블록: <a href="#">블록 링크</a></p>
-    <p>유튜브: <a href="#">채널 링크</a></p>
+    <p>유트브: <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">채널 링크</a></p>
   </div>
 </div>
 <div class="start-bar">
-  <div class="start-button">시작</div>
-  <div class="task">아스트어의 98 스타일 사이트</div>
+  <div class="start-button" onclick="toggleStartMenu()">시작</div>
+  <div class="task">JSP275의 98 스타일 사이트</div>
   <div class="clock" id="clock">00:00</div>
+</div>
+<div class="start-menu" id="startMenu">
+  <a href="#" onclick="scrollToSection('about'); toggleStartMenu();">About</a>
+  <a href="#" onclick="scrollToSection('projects'); toggleStartMenu();">Projects</a>
+  <a href="#" onclick="scrollToSection('now'); toggleStartMenu();">Now Playing</a>
+  <a href="#" onclick="scrollToSection('contact'); toggleStartMenu();">Links</a>
 </div>
 <script>
 function updateTime() {
-  const clock=document.getElementById('clock');
-  const now=new Date();
-  const h=String(now.getHours()).padStart(2,'0');
-  const m=String(now.getMinutes()).padStart(2,'0');
-  clock.textContent=h+':'+m;
+  const clock = document.getElementById('clock');
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  clock.textContent = h + ':' + m;
+}
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+function toggleStartMenu() {
+  const menu = document.getElementById('startMenu');
+  if (menu.style.display === 'block') {
+    menu.style.display = 'none';
+  } else {
+    menu.style.display = 'block';
+  }
+}
+function playRPS(choice) {
+  const choices = ['가이','바위','보'];
+  const comp = choices[Math.floor(Math.random()*3)];
+  let result;
+  if (choice === comp) result = '\ube44\uae5d\uc5b4\uc694! \ucee8\ud14c\uc704\ud130\ub3c4 ' + comp + '\ub97c \ub0c8\uc2b5\ub2c8\ub2e4.';
+  else if ((choice === '\uac00\uc774' && comp === '\ubcf4') || (choice === '\ubc14\uc704' && comp === '\uac00\uc774') || (choice === '\ubcf4' && comp === '\ubc14\uc704')) {
+    result = '\uc774\uac1c\uc694! \ucee8\ud14c\uc704\ud130\ub294 ' + comp + '\ub97c \ub0c8\uc2b5\ub2c8\ub2e4.';
+  } else {
+    result = '\uc800\uc694! \ucee8\ud14c\uc704\ud130\ub294 ' + comp + '\ub97c \ub0c8\uc2b5\ub2c8\ub2e4.';
+  }
+  document.getElementById('rps-result').textContent = result;
 }
 updateTime();
-setInterval(updateTime,60000);
+setInterval(updateTime, 60000);
 </script>
 </body>
 </html>
