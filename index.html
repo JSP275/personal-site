@@ -194,7 +194,7 @@
 <body>
   <div class="window" id="about">
     <div class="title-bar">
-      <span>ℹ️ About</span>
+      <span>[A] About</span>
       <div class="buttons"></div>
     </div>
     <div class="window-content">
@@ -204,7 +204,7 @@
 
   <div class="window" id="game">
     <div class="title-bar">
-      <span>🕹️ Game</span>
+      <span>[G] Game</span>
       <div class="buttons"></div>
     </div>
     <div class="window-content">
@@ -218,22 +218,22 @@
 
   <div class="window" id="now">
     <div class="title-bar">
-      <span>🎵 Now Playing</span>
+      <span>[N] Now Playing</span>
       <div class="buttons"></div>
     </div>
     <div class="window-content">
       <p>현재 작업하면서 듣고 있는 음악이나 즐겨 보는 콘텐츠를 공유합니다.</p>
       <ul>
-        <li>🎧 Aero Groove Mix</li>
-        <li>🎮 Old School Adventure</li>
-        <li>🔗 Retro Tech Blog</li>
+        <li>[M] Aero Groove Mix</li>
+        <li>[G] Old School Adventure</li>
+        <li>[L] Retro Tech Blog</li>
       </ul>
     </div>
   </div>
 
   <div class="window" id="links">
     <div class="title-bar">
-      <span>🔗 Links</span>
+      <span>[L] Links</span>
       <div class="buttons"></div>
     </div>
     <div class="window-content">
@@ -246,24 +246,40 @@
     </div>
   </div>
 
+    <!-- 블로그 목록 창 -->
+  <div class="floating-window" id="blogWindow" style="position: fixed; top: 100px; right: 20px; width: 230px; display: block;">
+    <div class="title-bar">
+      <span>[B] Blog</span>
+      <div class="buttons"></div>
+    </div>
+    <div class="window-content">
+      <ul id="postList">
+        <li><a href="#" onclick="openPost(0); return false;">첫 번째 글</a></li>
+        <li><a href="#" onclick="openPost(1); return false;">두 번째 글</a></li>
+        <li><a href="#" onclick="openPost(2); return false;">세 번째 글</a></li>
+      </ul>
+    </div>
+  </div>
+
   <!-- 시작 메뉴 -->
   <div class="start-menu" id="startMenu">
     <ul>
-      <li><button onclick="scrollToSection('about');toggleStartMenu()">ℹ️ About</button></li>
-      <li><button onclick="scrollToSection('game');toggleStartMenu()">🕹️ Game</button></li>
-      <li><button onclick="scrollToSection('now');toggleStartMenu()">🎵 Now Playing</button></li>
-      <li><button onclick="scrollToSection('links');toggleStartMenu()">🔗 Links</button></li>
-      <li><button onclick="toggleWindow('notepadWindow');toggleStartMenu()">📝 메모장</button></li>
-      <li><button onclick="toggleWindow('todoWindow');toggleStartMenu()">✅ 할 일 목록</button></li>
-      <li><button onclick="toggleWindow('calcWindow');toggleStartMenu()">🧮 계산기</button></li>
-      <li><button onclick="toggleWindow('drawWindow');toggleStartMenu()">🎨 그림판</button></li>
+      <li><button onclick="scrollToSection('about');toggleStartMenu()">[A] About</button></li>
+      <li><button onclick="scrollToSection('game');toggleStartMenu()">[G] Game</button></li>
+      <li><button onclick="scrollToSection('now');toggleStartMenu()">[N] Now Playing</button></li>
+      <li><button onclick="scrollToSection('links');toggleStartMenu()">[L] Links</button></li>
+      <li><button onclick="toggleWindow('blogWindow');toggleStartMenu()">[B] Blog</button></li>
+      <li><button onclick="toggleWindow('notepadWindow');toggleStartMenu()">[M] 메모장</button></li>
+      <li><button onclick="toggleWindow('todoWindow');toggleStartMenu()">[T] 할 일 목록</button></li>
+      <li><button onclick="toggleWindow('calcWindow');toggleStartMenu()">[C] 계산기</button></li>
+      <li><button onclick="toggleWindow('drawWindow');toggleStartMenu()">[P] 그림판</button></li>
     </ul>
   </div>
 
   <!-- 메모장 -->
   <div class="floating-window" id="notepadWindow">
     <div class="title-bar">
-      <span>📝 메모장</span>
+      <span>[M] 메모장</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('notepadWindow')">X</button></div>
     </div>
     <div class="window-content">
@@ -274,7 +290,7 @@
   <!-- 할 일 목록 -->
   <div class="floating-window" id="todoWindow">
     <div class="title-bar">
-      <span>✅ 할 일 목록</span>
+      <span>[T] 할 일 목록</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('todoWindow')">X</button></div>
     </div>
     <div class="window-content">
@@ -287,7 +303,7 @@
   <!-- 계산기 -->
   <div class="floating-window" id="calcWindow">
     <div class="title-bar">
-      <span>🧮 계산기</span>
+      <span>[C] 계산기</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('calcWindow')">X</button></div>
     </div>
     <div class="window-content">
@@ -323,12 +339,23 @@
   <!-- 그림판 -->
   <div class="floating-window" id="drawWindow">
     <div class="title-bar">
-      <span>🎨 그림판</span>
+      <span>[P] 그림판</span>
       <div class="buttons"><button class="btn" onclick="closeWindow('drawWindow')">X</button></div>
     </div>
     <div class="window-content">
       <canvas id="drawCanvas" width="260" height="150"></canvas>
       <button onclick="clearCanvas()">지우기</button>
+    </div>
+  </div>
+
+    <!-- 블로그 글 보기 창 -->
+  <div class="floating-window" id="postWindow" style="position: fixed; top: 120px; right: 270px; width: 300px; display: none;">
+    <div class="title-bar">
+      <span id="postTitle">글 제목</span>
+      <div class="buttons"><button class="btn" onclick="closeWindow('postWindow')">X</button></div>
+    </div>
+    <div class="window-content" id="postBody" style="white-space: pre-wrap;">
+      글 내용이 여기에 표시됩니다.
     </div>
   </div>
 
@@ -347,6 +374,21 @@
   let calcBuffer = '';
   let drawing = false;
   let lastX = 0, lastY = 0;
+
+  // 블로그 글 목록과 열기 함수
+  const posts = [
+    {title: '첫 번째 글', content: '여기에 첫 번째 글의 내용이 들어갑니다. 재미있는 이야기나 개발 일지를 적어보세요.'},
+    {title: '두 번째 글', content: '두 번째 글의 내용입니다. 새로운 게임 개발 아이디어나 일지를 써보세요.'},
+    {title: '세 번째 글', content: '세 번째 글의 내용입니다. 프로젝트 후기나 공부한 내용을 공유하세요.'}
+  ];
+  function openPost(index) {
+    const post = posts[index];
+    if (!post) return;
+    document.getElementById('postTitle').innerText = post.title;
+    document.getElementById('postBody').innerText = post.content;
+    document.getElementById('postWindow').style.display = 'block';
+  }
+
 
   function updateClock() {
     const now = new Date();
