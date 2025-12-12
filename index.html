@@ -1,1451 +1,806 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>JSP275 개인 사이트</title>
-<meta name="color-scheme" content="light" />
-<style>
-  :root{
-    --win-bg:#c0c0c0;
-    --win-face:#dcdcdc;
-    --win-shadow-dark:#808080;
-    --win-shadow-light:#ffffff;
-    --title-active-1:#000080;
-    --title-active-2:#0046b3;
-    --title-inactive-1:#7a7a7a;
-    --title-inactive-2:#9a9a9a;
-    --text:#000;
-    --taskbar-h:32px;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSP275 개인 사이트</title>
 
-  *{ box-sizing:border-box; }
-  html,body{ height:100%; }
-  body{
-    margin:0;
-    font-family:"MS Sans Serif", Arial, sans-serif;
-    color:var(--text);
-    min-height:100vh;
+  <!-- 98.css -->
+  <link rel="stylesheet" href="https://unpkg.com/98.css" />
 
-    background:
-      repeating-linear-gradient(45deg, #dcdcdc 0 10px, #c0c0c0 10px 20px),
-      linear-gradient(to bottom, #0067ac, #134a7c);
+  <style>
+    /* ✅ 98.css는 “스타일 시스템”이라, 우리는 레이아웃/배경만 최소로 건드립니다 */
+    body{
+      margin:0;
+      min-height:100vh;
+      padding:12px;
+      box-sizing:border-box;
+      background:#008080; /* Win98-ish teal */
+      overflow:hidden;
+    }
 
-    overflow:hidden; /* “데스크톱” 느낌 */
-    user-select:none;
-  }
+    /* 배경 프리셋(설정에서 바꿀 수 있게) */
+    body.wallpaper-stripes{
+      background:
+        repeating-linear-gradient(45deg, #dcdcdc 0 10px, #c0c0c0 10px 20px),
+        linear-gradient(to bottom, #0067ac, #134a7c);
+    }
+    body.wallpaper-teal{ background:#008080; }
+    body.wallpaper-dark{
+      background: radial-gradient(circle at 30% 20%, #1a2a44, #0a0f1a 70%);
+    }
 
-  /* 데스크톱 영역 */
-  .desktop{
-    position:relative;
-    width:100%;
-    height:calc(100vh - var(--taskbar-h));
-    padding:12px;
-  }
+    /* 메인 “셸” 창 */
+    #shell{
+      width:min(1200px, 100%);
+      height:calc(100vh - 24px);
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+    }
 
-  /* 공통 윈도우 */
-  .win{
-    position:absolute;
-    background:var(--win-bg);
-    border:2px solid #000;
-    box-shadow:
-      inset -2px -2px 0 var(--title-active-1),
-      inset  2px  2px 0 #f0f0f0;
-    min-width:220px;
-    display:none;
-  }
-  .win.is-open{ display:block; }
-  .win.is-minimized{ display:none; }
+    /* 셸 내부 그리드(스케치 구조) */
+    .shell-body{
+      display:grid;
+      grid-template-columns: 170px 1fr 220px;
+      gap:10px;
+      padding:10px;
+      height:100%;
+      box-sizing:border-box;
+      min-height:0;
+    }
 
-  .title-bar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:4px 6px;
-    color:#fff;
-    font-size:14px;
-    cursor:grab;
-    background:linear-gradient(to right, var(--title-active-1), var(--title-active-2));
-  }
-  .title-bar:active{ cursor:grabbing; }
+    .panel{
+      min-height:0;
+    }
 
-  .win.is-inactive .title-bar{
-    background:linear-gradient(to right, var(--title-inactive-1), var(--title-inactive-2));
-    color:#f4f4f4;
-  }
+    /* 왼쪽 버튼: 큼직하게 */
+    .big-btn{
+      width:100%;
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      margin-bottom:8px;
+    }
 
-  .title-left{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    min-width:0;
-  }
-  .title-icon{
-    width:14px; height:14px;
-    border:1px solid rgba(255,255,255,.8);
-    background:rgba(255,255,255,.2);
-    display:inline-block;
-  }
-  .title-text{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
+    /* 가운데 탭/콘텐츠 */
+    .center{
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+    .center .tabbar{
+      margin:0 0 6px 0;
+    }
+    .tabpanel{
+      flex:1;
+      min-height:0;
+      overflow:auto;
+    }
 
-  .title-buttons{
-    display:flex;
-    gap:2px;
-    flex:0 0 auto;
-  }
-  .winbtn{
-    width:18px;
-    height:16px;
-    border:1px solid #fff;
-    background:var(--win-bg);
-    display:grid;
-    place-items:center;
-    cursor:pointer;
-    padding:0;
-    font-family:inherit;
-    line-height:1;
-    user-select:none;
-  }
-  .winbtn:active{
-    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 var(--win-shadow-dark);
-  }
-  .winbtn span{ color:#000; font-size:12px; transform:translateY(-.5px); }
+    /* 블로그 탭 내부: 리스트/프리뷰 2분할 */
+    .blog-split{
+      display:grid;
+      grid-template-columns: 240px 1fr;
+      gap:10px;
+      min-height:300px;
+    }
+    .sunken-panel{
+      overflow:auto;
+    }
 
-  .window-content{
-    padding:10px;
-    background:var(--win-face);
-    border-top:2px solid var(--win-shadow-dark);
-    border-left:2px solid var(--win-shadow-dark);
-    border-right:2px solid var(--win-shadow-light);
-    border-bottom:2px solid var(--win-shadow-light);
-    user-select:text;
-  }
+    /* 오른쪽: 게임/채팅 */
+    .right fieldset{
+      margin:0 0 10px 0;
+    }
+    .chat-log{
+      height:160px;
+      padding:6px;
+      overflow:auto;
+      background:#fff;
+    }
+    .chat-row{
+      display:flex;
+      gap:6px;
+      margin-top:6px;
+    }
+    .chat-row input{
+      flex:1;
+    }
 
-  /* 섹션별 포인트 타이틀 */
-  .about-window .title-bar{ background:linear-gradient(to right, #000080, #0046b3); }
-  .game-window  .title-bar{ background:linear-gradient(to right, #006400, #008000); }
-  .now-window   .title-bar{ background:linear-gradient(to right, #4B0082, #800080); }
-  .links-window .title-bar{ background:linear-gradient(to right, #8B4513, #D2691E); }
-  .blog-window  .title-bar{ background:linear-gradient(to right, #6b2e00, #c06a1a); }
-  .note-window  .title-bar{ background:linear-gradient(to right, #003a7a, #2c78d4); }
-  .todo-window  .title-bar{ background:linear-gradient(to right, #2b2b2b, #6a6a6a); }
-  .calc-window  .title-bar{ background:linear-gradient(to right, #003b00, #2a8a2a); }
-  .draw-window  .title-bar{ background:linear-gradient(to right, #4a004a, #b300b3); }
+    /* 상태바(스케치 하단) */
+    .status-bar{
+      margin:0 10px 10px 10px;
+    }
 
-  /* 폼/버튼 */
-  button, input, textarea{
-    font-family:inherit;
-    font-size:14px;
-  }
-  .btn98{
-    padding:2px 8px;
-    border:2px solid #000;
-    background:#e0e0e0;
-    box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
-    cursor:pointer;
-    user-select:none;
-  }
-  .btn98:active{
-    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
-  }
-  input[type="text"], textarea{
-    width:100%;
-    padding:4px;
-    border:2px inset #808080;
-    background:#fff;
-  }
-  textarea{ min-height:160px; resize:vertical; }
+    /* 플로팅 창(그림판/설정/앱들) */
+    .floating{
+      position:absolute;
+      display:none;
+      z-index:50;
+      min-width:260px;
+    }
+    .floating .window-body{
+      padding:10px;
+    }
 
-  a{ color:#000080; }
-  a:visited{ color:#551a8b; }
-  a:hover{ background:#000080; color:#fff; }
+    /* 그림판 캔버스 */
+    #drawCanvas{
+      width:100%;
+      height:auto;
+      border:1px solid #000;
+      background:#fff;
+      image-rendering: pixelated;
+    }
+    .palette{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+      margin:8px 0 6px;
+    }
+    .swatch{
+      width:18px;height:18px;
+      border:1px solid #000;
+      padding:0;
+    }
 
-  /* 작업표시줄 */
-  .taskbar{
-    position:fixed;
-    left:0; right:0; bottom:0;
-    height:var(--taskbar-h);
-    background:linear-gradient(to top, #000080, #0046b3);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:0 8px;
-    box-shadow: inset 0 1px 0 #fff;
-  }
-  .start-button{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    background:var(--win-bg);
-    border:2px solid #000;
-    padding:2px 8px;
-    cursor:pointer;
-    box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
-    color:#000;
-    user-select:none;
-    min-width:74px;
-  }
-  .start-button:active{
-    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
-  }
-  .taskbar-windows{
-    display:flex;
-    gap:4px;
-    flex:1;
-    overflow:auto hidden;
-    padding-bottom:2px;
-  }
-  .taskbtn{
-    max-width:220px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    background:var(--win-bg);
-    border:2px solid #000;
-    padding:2px 8px;
-    cursor:pointer;
-    box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
-    color:#000;
-    user-select:none;
-  }
-  .taskbtn.is-active{
-    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
-    background:#d8d8d8;
-  }
-
-  .taskbar-right{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .clock{
-    min-width:92px;
-    text-align:right;
-    color:#fff;
-  }
-
-  /* 시작 메뉴 */
-  .start-menu{
-    position:fixed;
-    left:0;
-    bottom:var(--taskbar-h);
-    width:220px;
-    background:var(--win-bg);
-    border:2px solid #000;
-    box-shadow:2px 2px 0 #000;
-    display:none;
-    z-index:9999;
-  }
-  .start-menu.is-open{ display:block; }
-  .start-menu ul{
-    list-style:none;
-    padding:6px;
-    margin:0;
-  }
-  .start-menu li{
-    margin:2px 0;
-  }
-  .start-menu button{
-    width:100%;
-    text-align:left;
-    padding:6px 8px;
-    border:none;
-    background:none;
-    cursor:pointer;
-  }
-  .start-menu button:hover{
-    background:#000080;
-    color:#fff;
-  }
-
-  /* 계산기 */
-  .calc-display{
-    padding:6px;
-    border:2px inset #808080;
-    background:#fff;
-    margin-bottom:6px;
-    text-align:right;
-    font-variant-numeric:tabular-nums;
-    min-height:30px;
-  }
-  .calc-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:4px;
-  }
-  .calc-grid .btn98{ width:100%; padding:6px 0; }
-
-  /* Todo */
-  .todo-row{
-    display:flex; gap:6px; margin-bottom:6px;
-  }
-  .todo-row input{ flex:1; }
-  .todo-list{
-    list-style:none;
-    padding-left:0;
-    margin:6px 0 0;
-  }
-  .todo-item{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    padding:4px;
-    border:1px dashed #808080;
-    margin-bottom:4px;
-    background:#f3f3f3;
-  }
-  .todo-item.done .todo-text{ text-decoration:line-through; opacity:.75; }
-  .todo-spacer{ flex:1; }
-
-  /* 그림판 */
-  #drawCanvas{
-    border:2px inset #808080;
-    background:#fff;
-    touch-action:none;
-  }
-  .draw-toolbar{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    align-items:center;
-    margin-top:8px;
-  }
-  .swatch{
-    width:18px; height:18px;
-    border:1px solid #404040;
-    cursor:pointer;
-  }
-  .small{
-    font-size:12px;
-    opacity:.85;
-  }
-  .statusbar{
-    margin-top:8px;
-    padding:4px 6px;
-    border:2px inset #808080;
-    background:#efefef;
-    font-size:12px;
-  }
-</style>
+    /* 작은 화면 대응: 세로로 쌓기 */
+    @media (max-width: 900px){
+      body{ overflow:auto; }
+      #shell{ height:auto; }
+      .shell-body{
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
-<body>
-  <div class="desktop" id="desktop">
-    <!-- About -->
-    <div class="win about-window" id="about"
-         data-title="[A] About" data-hotkey="a"
-         style="left:18px; top:18px; width:360px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[A] About</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content">
-        <p><b>JSP275</b>의 개인적인 공간입니다.</p>
-        <p class="small">Alt + A/G/N/L/B/M/T/C/P 로 창을 열 수 있어요.</p>
-        <div class="statusbar" id="aboutStatus">상태: 준비 완료</div>
+<body class="wallpaper-stripes">
+  <!-- ✅ 메인 셸(스케치의 큰 창) -->
+  <div class="window" id="shell">
+    <div class="title-bar">
+      <div class="title-bar-text">JSP275 Desktop</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" title="Minimize"></button>
+        <button aria-label="Maximize" title="Maximize"></button>
+        <button aria-label="Close" title="Close" onclick="alert('이 창은 닫기 비활성(셸) 입니다 🙂')"></button>
       </div>
     </div>
 
-    <!-- Game -->
-    <div class="win game-window" id="game"
-         data-title="[G] Game" data-hotkey="g"
-         style="left:400px; top:18px; width:380px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[G] Game</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
+    <div class="window-body shell-body">
+      <!-- LEFT -->
+      <div class="panel left">
+        <button class="big-btn" onclick="openWindow('drawWin')">그림</button>
+        <button class="big-btn" onclick="openWindow('settingsWin')">설정 메뉴</button>
+
+        <fieldset>
+          <legend>바로가기</legend>
+          <div class="field-row-stacked">
+            <button onclick="openWindow('notepadWin')">메모장</button>
+            <button onclick="openWindow('todoWin')">할 일 목록</button>
+            <button onclick="openWindow('calcWin')">계산기</button>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>링크</legend>
+          <ul class="tree-view">
+            <li><a href="https://jsp275.github.io" target="_blank" rel="noreferrer">Blog</a></li>
+            <li><a href="https://itch.io" target="_blank" rel="noreferrer">Itch.io</a></li>
+            <li><a href="https://youtu.be/dQw4w9WgXcQ" target="_blank" rel="noreferrer">YouTube</a></li>
+          </ul>
+        </fieldset>
+      </div>
+
+      <!-- CENTER -->
+      <div class="panel center">
+        <menu role="tablist" class="tabbar" id="tabs">
+          <li role="tab" aria-selected="true"><a href="#tab-main" data-tab="main">메인로그</a></li>
+          <li role="tab"><a href="#tab-blog" data-tab="blog">블로그</a></li>
+          <li role="tab"><a href="#tab-project" data-tab="project">프로젝트</a></li>
+        </menu>
+
+        <div class="window tabpanel" role="tabpanel">
+          <div class="window-body">
+            <!-- MAIN -->
+            <section id="tab-main" class="tab-page">
+              <h3 style="margin:0 0 6px 0;">JSP275의 메인로그</h3>
+              <div class="field-border" style="padding:10px;">
+                <p style="margin-top:0;">
+                  여기는 “중앙 작업 영역”이에요. 왼쪽/오른쪽 버튼으로 앱을 열거나,
+                  상단 탭으로 콘텐츠를 바꿀 수 있어요.
+                </p>
+                <ul>
+                  <li>왼쪽: 그림/설정 + 앱 런처</li>
+                  <li>오른쪽: 게임(가위바위보) + 로컬 채팅(저장됨)</li>
+                  <li>아래: 상태바(지금/이름/시간)</li>
+                </ul>
+              </div>
+
+              <fieldset style="margin-top:10px;">
+                <legend>Now Playing</legend>
+                <ul class="tree-view">
+                  <li>[M] Aero Groove Mix</li>
+                  <li>[G] Old School Adventure</li>
+                  <li>[L] Retro Tech Blog</li>
+                </ul>
+              </fieldset>
+            </section>
+
+            <!-- BLOG -->
+            <section id="tab-blog" class="tab-page" style="display:none;">
+              <div class="blog-split">
+                <div>
+                  <fieldset>
+                    <legend>글 목록</legend>
+                    <ul class="tree-view" id="postList"></ul>
+                  </fieldset>
+                </div>
+                <div>
+                  <fieldset>
+                    <legend id="postTitle">선택한 글</legend>
+                    <div class="sunken-panel" style="height:260px; padding:10px;">
+                      <div id="postBody" style="white-space:pre-wrap;"></div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+            </section>
+
+            <!-- PROJECT -->
+            <section id="tab-project" class="tab-page" style="display:none;">
+              <fieldset>
+                <legend>프로젝트</legend>
+                <div class="field-row-stacked">
+                  <div class="field-border" style="padding:10px; margin-bottom:8px;">
+                    <strong>게임 개발</strong><br/>
+                    - 진행 중인 게임/툴/에셋 정리 영역
+                  </div>
+                  <div class="field-border" style="padding:10px;">
+                    <strong>블로그</strong><br/>
+                    - 제작 일지 / 공부 기록 / 링크 모음
+                  </div>
+                </div>
+              </fieldset>
+            </section>
+          </div>
         </div>
       </div>
-      <div class="window-content">
-        <p>아래 버튼을 눌러 가위·바위·보 게임을 해보세요!</p>
-        <p id="rpsResult">결과가 여기에 표시됩니다.</p>
-        <button class="btn98" data-rps="가위">가위</button>
-        <button class="btn98" data-rps="바위">바위</button>
-        <button class="btn98" data-rps="보">보</button>
-        <div class="statusbar" id="gameStatus">상태: 대기 중</div>
+
+      <!-- RIGHT -->
+      <div class="panel right">
+        <fieldset>
+          <legend>게임</legend>
+          <p style="margin-top:0;">가위·바위·보</p>
+          <div class="field-row">
+            <button onclick="playRPS('가위')">가위</button>
+            <button onclick="playRPS('바위')">바위</button>
+            <button onclick="playRPS('보')">보</button>
+          </div>
+          <div class="status-field-border" style="padding:6px; margin-top:6px;">
+            <span id="rpsResult">결과가 여기에 표시됩니다.</span>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>채팅</legend>
+          <div class="sunken-panel chat-log" id="chatLog"></div>
+          <div class="chat-row">
+            <input id="chatInput" type="text" placeholder="메시지..." />
+            <button onclick="sendChat()">보내기</button>
+          </div>
+          <div class="field-row" style="margin-top:6px;">
+            <button onclick="clearChat()">기록 지우기</button>
+          </div>
+        </fieldset>
       </div>
     </div>
 
-    <!-- Now -->
-    <div class="win now-window" id="now"
-         data-title="[N] Now Playing" data-hotkey="n"
-         style="left:18px; top:270px; width:360px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[N] Now Playing</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content">
-        <p>현재 작업하면서 듣는/보는 것들을 적어두는 곳.</p>
-        <ul>
-          <li>[M] Aero Groove Mix</li>
-          <li>[G] Old School Adventure</li>
-          <li>[L] Retro Tech Blog</li>
-        </ul>
-        <div class="statusbar">팁: 나중에 여기 “음악 플레이어” 창도 붙이기 쉬워요.</div>
+    <!-- ✅ 하단 상태바(스케치의 바닥 줄) -->
+    <div class="status-bar">
+      <p class="status-bar-field" style="width:120px;">지금</p>
+      <p class="status-bar-field" style="flex:1;">JSP275</p>
+      <p class="status-bar-field" id="clock" style="width:120px; text-align:right;">--:--:--</p>
+    </div>
+  </div>
+
+  <!-- =======================
+       플로팅 앱들 (98.css 창)
+       ======================= -->
+
+  <!-- 그림판 -->
+  <div class="window floating" id="drawWin" style="left:80px; top:90px; width:420px;">
+    <div class="title-bar">
+      <div class="title-bar-text">그림판</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('drawWin')"></button>
       </div>
     </div>
-
-    <!-- Links -->
-    <div class="win links-window" id="links"
-         data-title="[L] Links" data-hotkey="l"
-         style="left:400px; top:270px; width:380px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[L] Links</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
+    <div class="window-body">
+      <div class="sunken-panel" style="padding:8px;">
+        <canvas id="drawCanvas" width="360" height="220"></canvas>
       </div>
-      <div class="window-content">
-        <p>다른 플랫폼으로 연결되는 링크입니다.</p>
-        <ul>
-          <li><a href="https://youtu.be/dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">YouTube (릭롤)</a></li>
-          <li><a href="https://jsp275.github.io" target="_blank" rel="noopener noreferrer">Blog</a></li>
-          <li><a href="https://itch.io" target="_blank" rel="noopener noreferrer">Itch.io</a></li>
-        </ul>
-        <div class="statusbar">보안: 외부 링크는 새 탭 + noopener 적용.</div>
+
+      <div class="palette">
+        <button class="swatch" style="background:#000" onclick="setDrawColor('#000000')" aria-label="Black"></button>
+        <button class="swatch" style="background:#f00" onclick="setDrawColor('#ff0000')" aria-label="Red"></button>
+        <button class="swatch" style="background:#0f0" onclick="setDrawColor('#00ff00')" aria-label="Green"></button>
+        <button class="swatch" style="background:#00f" onclick="setDrawColor('#0000ff')" aria-label="Blue"></button>
+        <button class="swatch" style="background:#ff0" onclick="setDrawColor('#ffff00')" aria-label="Yellow"></button>
+        <button class="swatch" style="background:#f0f" onclick="setDrawColor('#ff00ff')" aria-label="Magenta"></button>
+        <button class="swatch" style="background:#0ff" onclick="setDrawColor('#00ffff')" aria-label="Cyan"></button>
+        <button class="swatch" style="background:#ffa500" onclick="setDrawColor('#ffa500')" aria-label="Orange"></button>
       </div>
-    </div>
 
-    <!-- Blog list -->
-    <div class="win blog-window" id="blogWindow"
-         data-title="[B] Blog" data-hotkey="b"
-         style="left:820px; top:18px; width:260px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[B] Blog</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content">
-        <input type="text" id="postSearch" placeholder="검색 (제목/내용)" />
-        <ul id="postList"></ul>
-        <div class="statusbar" id="blogStatus">글: 0개</div>
-      </div>
-    </div>
-
-    <!-- Blog post viewer -->
-    <div class="win blog-window" id="postWindow"
-         data-title="Post" data-hotkey=""
-         style="left:820px; top:320px; width:360px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text" id="postTitle">글 제목</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content" id="postBody" style="white-space:pre-wrap;">
-        글 내용이 여기에 표시됩니다.
-      </div>
-    </div>
-
-    <!-- Notepad -->
-    <div class="win note-window" id="notepadWindow"
-         data-title="[M] 메모장" data-hotkey="m"
-         style="left:18px; top:520px; width:420px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[M] 메모장</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content">
-        <textarea id="noteArea" placeholder="여기에 메모를 작성하세요..."></textarea>
-        <div>
-          <button class="btn98" id="saveNoteBtn">저장</button>
-          <button class="btn98" id="clearNoteBtn">비우기</button>
-        </div>
-        <div class="statusbar" id="noteStatus">상태: 저장됨</div>
-      </div>
-    </div>
-
-    <!-- Todo -->
-    <div class="win todo-window" id="todoWindow"
-         data-title="[T] 할 일 목록" data-hotkey="t"
-         style="left:460px; top:520px; width:420px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[T] 할 일 목록</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content">
-        <div class="todo-row">
-          <input type="text" id="todoInput" placeholder="할 일을 입력하세요 (Enter로 추가)" />
-          <button class="btn98" id="addTodoBtn">추가</button>
-        </div>
-        <ul class="todo-list" id="todoList"></ul>
-        <div class="statusbar" id="todoStatus">상태: 준비 완료</div>
-      </div>
-    </div>
-
-    <!-- Calculator -->
-    <div class="win calc-window" id="calcWindow"
-         data-title="[C] 계산기" data-hotkey="c"
-         style="left:910px; top:520px; width:260px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[C] 계산기</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content">
-        <div class="calc-display" id="calcDisplay">0</div>
-        <div class="calc-grid">
-          <button class="btn98" data-k="7">7</button>
-          <button class="btn98" data-k="8">8</button>
-          <button class="btn98" data-k="9">9</button>
-          <button class="btn98" data-k="/">÷</button>
-
-          <button class="btn98" data-k="4">4</button>
-          <button class="btn98" data-k="5">5</button>
-          <button class="btn98" data-k="6">6</button>
-          <button class="btn98" data-k="*">×</button>
-
-          <button class="btn98" data-k="1">1</button>
-          <button class="btn98" data-k="2">2</button>
-          <button class="btn98" data-k="3">3</button>
-          <button class="btn98" data-k="-">−</button>
-
-          <button class="btn98" data-k="0">0</button>
-          <button class="btn98" data-k=".">.</button>
-          <button class="btn98" data-k="=">=</button>
-          <button class="btn98" data-k="+">＋</button>
-
-          <button class="btn98" data-k="(">(</button>
-          <button class="btn98" data-k=")">)</button>
-          <button class="btn98" data-k="bk">⌫</button>
-          <button class="btn98" data-k="ac">AC</button>
-        </div>
-        <div class="statusbar small">안전 계산: eval 안 씀.</div>
-      </div>
-    </div>
-
-    <!-- Draw -->
-    <div class="win draw-window" id="drawWindow"
-         data-title="[P] 그림판" data-hotkey="p"
-         style="left:1185px; top:18px; width:380px;">
-      <div class="title-bar">
-        <div class="title-left">
-          <span class="title-icon" aria-hidden="true"></span>
-          <span class="title-text">[P] 그림판</span>
-        </div>
-        <div class="title-buttons">
-          <button class="winbtn" data-action="min" title="최소화"><span>_</span></button>
-          <button class="winbtn" data-action="close" title="닫기"><span>X</span></button>
-        </div>
-      </div>
-      <div class="window-content">
-        <canvas id="drawCanvas" width="340" height="220"></canvas>
-
-        <div class="draw-toolbar">
-          <div class="swatch" data-color="#000000" style="background:#000000"></div>
-          <div class="swatch" data-color="#FF0000" style="background:#FF0000"></div>
-          <div class="swatch" data-color="#00FF00" style="background:#00FF00"></div>
-          <div class="swatch" data-color="#0000FF" style="background:#0000FF"></div>
-          <div class="swatch" data-color="#FFFF00" style="background:#FFFF00"></div>
-          <div class="swatch" data-color="#800080" style="background:#800080"></div>
-          <div class="swatch" data-color="#FFA500" style="background:#FFA500"></div>
-          <div class="swatch" data-color="#00FFFF" style="background:#00FFFF"></div>
-          <div class="swatch" data-color="#FF00FF" style="background:#FF00FF"></div>
-
-          <label class="small" style="display:flex;align-items:center;gap:6px;">
-            굵기
-            <input id="brushSize" type="range" min="1" max="12" value="3" />
-          </label>
-
-          <button class="btn98" id="eraserBtn">지우개</button>
-          <button class="btn98" id="undoBtn">되돌리기</button>
-          <button class="btn98" id="clearCanvasBtn">전체지우기</button>
-          <button class="btn98" id="savePngBtn">PNG 저장</button>
-        </div>
-
-        <div class="statusbar" id="drawStatus">색상: #000000 / 모드: 펜</div>
+      <div class="field-row">
+        <button onclick="clearCanvas()">지우기</button>
       </div>
     </div>
   </div>
 
-  <!-- 시작 메뉴 -->
-  <div class="start-menu" id="startMenu" aria-hidden="true">
-    <ul id="startMenuList"></ul>
+  <!-- 설정 -->
+  <div class="window floating" id="settingsWin" style="left:520px; top:110px; width:360px;">
+    <div class="title-bar">
+      <div class="title-bar-text">설정</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('settingsWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <fieldset>
+        <legend>배경</legend>
+        <div class="field-row-stacked" style="max-width: 100%;">
+          <label for="wallpaperSel">Wallpaper</label>
+          <select id="wallpaperSel" onchange="applyWallpaper(this.value)">
+            <option value="wallpaper-stripes">Stripes + Gradient</option>
+            <option value="wallpaper-teal">Classic Teal</option>
+            <option value="wallpaper-dark">Dark Mood</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset style="margin-top:10px;">
+        <legend>옵션</legend>
+        <div class="field-row">
+          <input id="optAutosave" type="checkbox" checked />
+          <label for="optAutosave">메모/할일 자동저장</label>
+        </div>
+      </fieldset>
+
+      <div class="field-row" style="margin-top:10px; justify-content:flex-end;">
+        <button class="default" onclick="closeWindow('settingsWin')">확인</button>
+      </div>
+    </div>
   </div>
 
-  <!-- 작업표시줄 -->
-  <div class="taskbar">
-    <div class="start-button" id="startButton">
-      <span style="font-weight:700;">Start</span>
+  <!-- 메모장 -->
+  <div class="window floating" id="notepadWin" style="left:140px; top:360px; width:420px;">
+    <div class="title-bar">
+      <div class="title-bar-text">메모장</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('notepadWin')"></button>
+      </div>
     </div>
-
-    <div class="taskbar-windows" id="taskbarWindows" aria-label="열려있는 창"></div>
-
-    <div class="taskbar-right">
-      <span class="small" id="titleHint">Alt+키로 창 열기</span>
-      <div class="clock" id="clock"></div>
+    <div class="window-body">
+      <div class="field-row-stacked">
+        <label for="noteArea">메모</label>
+        <textarea id="noteArea" rows="8" placeholder="여기에 메모..."></textarea>
+      </div>
+      <div class="field-row" style="justify-content:flex-end;">
+        <button onclick="saveNote()">저장</button>
+      </div>
     </div>
   </div>
 
-<script>
-(() => {
-  /* -------------------------
-   *  Window Manager
-   * ------------------------- */
-  const desktop = document.getElementById('desktop');
-  const startMenu = document.getElementById('startMenu');
-  const startButton = document.getElementById('startButton');
-  const startMenuList = document.getElementById('startMenuList');
-  const taskbarWindows = document.getElementById('taskbarWindows');
-  const titleHint = document.getElementById('titleHint');
+  <!-- 할 일 목록 -->
+  <div class="window floating" id="todoWin" style="left:590px; top:360px; width:420px;">
+    <div class="title-bar">
+      <div class="title-bar-text">할 일 목록</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('todoWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="field-row-stacked">
+        <label for="todoInput">할 일</label>
+        <input id="todoInput" type="text" placeholder="할 일을 입력..." />
+      </div>
+      <div class="field-row">
+        <button onclick="addTodo()">추가</button>
+        <button onclick="clearTodos()">전체삭제</button>
+      </div>
+      <div class="sunken-panel" style="height:160px; padding:8px;">
+        <ul class="tree-view" id="todoList"></ul>
+      </div>
+    </div>
+  </div>
 
-  const STORAGE = {
-    windowState: 'jsp275_window_state_v2',
-    note: 'jsp275_note_v2',
-    todos: 'jsp275_todos_v2'
-  };
+  <!-- 계산기 -->
+  <div class="window floating" id="calcWin" style="left:980px; top:110px; width:280px;">
+    <div class="title-bar">
+      <div class="title-bar-text">계산기</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('calcWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="status-field-border" style="padding:8px; text-align:right;" id="calcDisplay">0</div>
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:8px;">
+        <button onclick="pressKey('7')">7</button>
+        <button onclick="pressKey('8')">8</button>
+        <button onclick="pressKey('9')">9</button>
+        <button onclick="pressKey('/')">÷</button>
 
-  let zTop = 50;
-  let activeId = null;
+        <button onclick="pressKey('4')">4</button>
+        <button onclick="pressKey('5')">5</button>
+        <button onclick="pressKey('6')">6</button>
+        <button onclick="pressKey('*')">×</button>
 
-  const windows = [...document.querySelectorAll('.win')].map(el => ({
-    el,
-    id: el.id,
-    title: el.dataset.title || el.id,
-    hotkey: (el.dataset.hotkey || '').toLowerCase(),
-  }));
+        <button onclick="pressKey('1')">1</button>
+        <button onclick="pressKey('2')">2</button>
+        <button onclick="pressKey('3')">3</button>
+        <button onclick="pressKey('-')">−</button>
 
-  function loadWindowState(){
-    try { return JSON.parse(localStorage.getItem(STORAGE.windowState) || '{}'); }
-    catch { return {}; }
-  }
-  function saveWindowState(state){
-    localStorage.setItem(STORAGE.windowState, JSON.stringify(state));
-  }
+        <button onclick="pressKey('0')">0</button>
+        <button onclick="pressKey('.')">.</button>
+        <button class="default" onclick="calculate()">=</button>
+        <button onclick="pressKey('+')">＋</button>
+      </div>
 
-  function getState(){
-    const state = loadWindowState();
-    if (!state.order) state.order = [];
-    if (!state.pos) state.pos = {};
-    if (!state.open) state.open = {};
-    if (!state.min) state.min = {};
-    return state;
-  }
+      <div class="field-row" style="justify-content:flex-end; margin-top:8px;">
+        <button onclick="clearCalc()">초기화</button>
+      </div>
+    </div>
+  </div>
 
-  function applySavedPositions(){
-    const state = getState();
-    for (const w of windows){
-      const p = state.pos[w.id];
-      if (p && typeof p.left === 'number' && typeof p.top === 'number'){
-        w.el.style.left = p.left + 'px';
-        w.el.style.top  = p.top  + 'px';
-      }
-      const isOpen = !!state.open[w.id];
-      const isMin  = !!state.min[w.id];
-      if (isOpen) openWindow(w.id, {focus:false, fromRestore:true});
-      if (isOpen && isMin) minimizeWindow(w.id, {silent:true});
-    }
-  }
+  <script>
+    /* -------------------------
+       탭
+    ------------------------- */
+    const tabLinks = document.querySelectorAll('#tabs a[data-tab]');
+    const tabPages = document.querySelectorAll('.tab-page');
 
-  function focusWindow(id){
-    const w = windows.find(x => x.id === id);
-    if (!w) return;
-
-    zTop += 1;
-    w.el.style.zIndex = zTop;
-
-    // inactive 처리
-    for (const ww of windows){
-      ww.el.classList.toggle('is-inactive', ww.id !== id);
-    }
-    activeId = id;
-    syncTaskbar();
-  }
-
-  function openWindow(id, opts={focus:true, fromRestore:false}){
-    const w = windows.find(x => x.id === id);
-    if (!w) return;
-
-    w.el.classList.add('is-open');
-    w.el.classList.remove('is-minimized');
-
-    // 첫 오픈이면 중앙/화면 안으로 보정
-    if (!opts.fromRestore){
-      clampToViewport(w.el);
-    }
-
-    // 상태 저장
-    const state = getState();
-    state.open[id] = true;
-    state.min[id] = false;
-    saveWindowState(state);
-
-    if (opts.focus) focusWindow(id);
-    syncTaskbar();
-  }
-
-  function closeWindow(id){
-    const w = windows.find(x => x.id === id);
-    if (!w) return;
-
-    w.el.classList.remove('is-open');
-    w.el.classList.add('is-minimized'); // 안 보이게
-    w.el.style.display = 'none';
-
-    const state = getState();
-    state.open[id] = false;
-    state.min[id] = false;
-    saveWindowState(state);
-
-    if (activeId === id) activeId = null;
-    syncTaskbar();
-  }
-
-  function minimizeWindow(id, opts={silent:false}){
-    const w = windows.find(x => x.id === id);
-    if (!w) return;
-
-    w.el.classList.add('is-minimized');
-    w.el.style.display = 'none';
-
-    const state = getState();
-    state.open[id] = true;
-    state.min[id] = true;
-    saveWindowState(state);
-
-    if (!opts.silent && activeId === id) activeId = null;
-    syncTaskbar();
-  }
-
-  function toggleWindow(id){
-    const w = windows.find(x => x.id === id);
-    if (!w) return;
-
-    const isOpen = w.el.classList.contains('is-open');
-    const isMin  = w.el.classList.contains('is-minimized');
-
-    if (!isOpen) openWindow(id);
-    else if (isMin) { w.el.style.display='block'; w.el.classList.remove('is-minimized'); focusWindow(id);
-      const state = getState(); state.min[id]=false; saveWindowState(state); syncTaskbar();
-    }
-    else minimizeWindow(id);
-  }
-
-  function clampToViewport(el){
-    // window가 화면 밖으로 나가지 않도록 보정
-    const pad = 6;
-    const rect = el.getBoundingClientRect();
-    const maxX = window.innerWidth  - rect.width  - pad;
-    const maxY = window.innerHeight - rect.height - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--taskbar-h')) - pad;
-
-    let left = parseFloat(el.style.left || rect.left);
-    let top  = parseFloat(el.style.top  || rect.top);
-
-    if (isNaN(left)) left = pad;
-    if (isNaN(top))  top  = pad;
-
-    left = Math.max(pad, Math.min(left, Math.max(pad, maxX)));
-    top  = Math.max(pad, Math.min(top,  Math.max(pad, maxY)));
-
-    el.style.left = left + 'px';
-    el.style.top  = top  + 'px';
-  }
-
-  function syncTaskbar(){
-    taskbarWindows.innerHTML = '';
-
-    const state = getState();
-    const openIds = windows
-      .filter(w => state.open[w.id])
-      .map(w => w.id);
-
-    for (const id of openIds){
-      const w = windows.find(x => x.id === id);
-      const btn = document.createElement('div');
-      btn.className = 'taskbtn' + (activeId === id ? ' is-active' : '');
-      btn.textContent = w.title;
-      btn.title = w.title;
-      btn.addEventListener('click', () => toggleWindow(id));
-      taskbarWindows.appendChild(btn);
-    }
-
-    // 힌트 갱신
-    const active = windows.find(w => w.id === activeId);
-    titleHint.textContent = active ? active.title : 'Alt+키로 창 열기';
-  }
-
-  /* -------------------------
-   *  Start Menu
-   * ------------------------- */
-  function buildStartMenu(){
-    startMenuList.innerHTML = '';
-    for (const w of windows){
-      // postWindow는 직접 열 필요가 없으니 메뉴에서 제외
-      if (w.id === 'postWindow') continue;
-
-      const li = document.createElement('li');
-      const b = document.createElement('button');
-      b.textContent = w.title;
-      b.addEventListener('click', () => {
-        openWindow(w.id);
-        closeStartMenu();
-      });
-      li.appendChild(b);
-      startMenuList.appendChild(li);
-    }
-  }
-
-  function openStartMenu(){
-    startMenu.classList.add('is-open');
-    startMenu.setAttribute('aria-hidden', 'false');
-  }
-  function closeStartMenu(){
-    startMenu.classList.remove('is-open');
-    startMenu.setAttribute('aria-hidden', 'true');
-  }
-  function toggleStartMenu(){
-    if (startMenu.classList.contains('is-open')) closeStartMenu();
-    else openStartMenu();
-  }
-
-  startButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleStartMenu();
-  });
-
-  // 바깥 클릭 시 닫기
-  document.addEventListener('mousedown', (e) => {
-    if (!startMenu.contains(e.target) && e.target !== startButton && !startButton.contains(e.target)){
-      closeStartMenu();
-    }
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeStartMenu();
-
-    // Alt+Hotkey로 창 열기
-    if (e.altKey && !e.ctrlKey && !e.metaKey){
-      const k = e.key.toLowerCase();
-      const w = windows.find(x => x.hotkey === k);
-      if (w){
+    tabLinks.forEach(a => {
+      a.addEventListener('click', (e) => {
         e.preventDefault();
-        openWindow(w.id);
-        closeStartMenu();
-      }
+        const key = a.dataset.tab;
+
+        // aria-selected 처리(98.css 탭 규칙)
+        document.querySelectorAll('#tabs li[role="tab"]').forEach(li => li.setAttribute('aria-selected', 'false'));
+        a.closest('li').setAttribute('aria-selected', 'true');
+
+        tabPages.forEach(p => p.style.display = 'none');
+        document.getElementById('tab-' + key).style.display = 'block';
+      });
+    });
+
+    /* -------------------------
+       시계
+    ------------------------- */
+    function updateClock(){
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      const ss = String(now.getSeconds()).padStart(2,'0');
+      document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`;
     }
-  });
+    setInterval(updateClock, 500);
+    updateClock();
 
-  /* -------------------------
-   *  Dragging (Pointer)
-   * ------------------------- */
-  function makeDraggable(winEl){
-    const title = winEl.querySelector('.title-bar');
-    if (!title) return;
+    /* -------------------------
+       블로그
+    ------------------------- */
+    const posts = [
+      {title:'첫 번째 글', content:'행복은 습관이다. 그것을 몸에 지니라. - 엘버트 허버드'},
+      {title:'두 번째 글', content:'모든 위대한 것들은 작은 시작에서 비롯된다. - 플라톤'},
+      {title:'세 번째 글', content:'우리는 변화를 두려워하지 말아야 한다. - 톨스토이'},
+      {title:'네 번째 글', content:'지식은 힘이다. - 프랜시스 베이컨'},
+      {title:'다섯 번째 글', content:'길을 잃는다는 것은 곧 새로운 길을 찾는 것이다. - 톨스토이'},
+    ];
 
-    let dragging = false;
-    let startX=0, startY=0, startL=0, startT=0;
+    function renderPostList(){
+      const ul = document.getElementById('postList');
+      ul.innerHTML = '';
+      posts.forEach((p, idx) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = p.title;
+        a.onclick = (e) => { e.preventDefault(); openPost(idx); };
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      openPost(0);
+    }
 
-    title.addEventListener('pointerdown', (e) => {
-      // 버튼 클릭은 드래그 금지
-      if (e.target.closest('.winbtn')) return;
+    function openPost(index){
+      const p = posts[index];
+      if(!p) return;
+      document.getElementById('postTitle').textContent = p.title;
+      document.getElementById('postBody').textContent = p.content;
+    }
 
-      dragging = true;
-      focusWindow(winEl.id);
-
-      const rect = winEl.getBoundingClientRect();
-      startX = e.clientX;
-      startY = e.clientY;
-      startL = rect.left;
-      startT = rect.top;
-
-      winEl.setPointerCapture(e.pointerId);
-      e.preventDefault();
-    });
-
-    title.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-
-      winEl.style.left = (startL + dx) + 'px';
-      winEl.style.top  = (startT + dy) + 'px';
-    });
-
-    title.addEventListener('pointerup', (e) => {
-      if (!dragging) return;
-      dragging = false;
-
-      clampToViewport(winEl);
-
-      // 위치 저장
-      const rect = winEl.getBoundingClientRect();
-      const state = getState();
-      state.pos[winEl.id] = { left: Math.round(rect.left), top: Math.round(rect.top) };
-      saveWindowState(state);
-    });
-
-    // 클릭만 해도 포커스
-    winEl.addEventListener('mousedown', () => focusWindow(winEl.id));
-  }
-
-  for (const w of windows) makeDraggable(w.el);
-
-  // 타이틀바 버튼(최소화/닫기)
-  document.querySelectorAll('.win .winbtn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const winEl = e.target.closest('.win');
-      const act = btn.dataset.action;
-      if (!winEl) return;
-      if (act === 'close') closeWindow(winEl.id);
-      if (act === 'min') minimizeWindow(winEl.id);
-    });
-  });
-
-  /* -------------------------
-   *  Clock
-   * ------------------------- */
-  const clockEl = document.getElementById('clock');
-  function updateClock(){
-    const now = new Date();
-    const yy = now.getFullYear();
-    const mm = String(now.getMonth()+1).padStart(2,'0');
-    const dd = String(now.getDate()).padStart(2,'0');
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mi = String(now.getMinutes()).padStart(2,'0');
-    clockEl.textContent = `${yy}-${mm}-${dd} ${hh}:${mi}`;
-  }
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  /* -------------------------
-   *  RPS
-   * ------------------------- */
-  const rpsResult = document.getElementById('rpsResult');
-  const gameStatus = document.getElementById('gameStatus');
-  document.querySelectorAll('[data-rps]').forEach(b => {
-    b.addEventListener('click', () => {
-      const choice = b.dataset.rps;
+    /* -------------------------
+       게임: 가위바위보
+    ------------------------- */
+    function playRPS(choice){
       const choices = ['가위','바위','보'];
       const comp = choices[Math.floor(Math.random()*3)];
       let result;
-      if (choice === comp) result = `비겼어요! 컴퓨터도 ${comp}.`;
-      else if (
-        (choice === '가위' && comp === '보') ||
-        (choice === '바위' && comp === '가위') ||
-        (choice === '보' && comp === '바위')
-      ) result = `이겼어요! 컴퓨터는 ${comp}.`;
+      if(choice === comp) result = `비겼어요! 컴퓨터도 ${comp}.`;
+      else if((choice==='가위' && comp==='보') || (choice==='바위' && comp==='가위') || (choice==='보' && comp==='바위'))
+        result = `이겼어요! 컴퓨터는 ${comp}.`;
       else result = `졌어요! 컴퓨터는 ${comp}.`;
-      rpsResult.textContent = result;
-      gameStatus.textContent = `상태: ${result.includes('이겼') ? '승리' : result.includes('졌') ? '패배' : '무승부'}`;
-    });
-  });
-
-  /* -------------------------
-   *  Notepad (localStorage)
-   * ------------------------- */
-  const noteArea = document.getElementById('noteArea');
-  const noteStatus = document.getElementById('noteStatus');
-  const saveNoteBtn = document.getElementById('saveNoteBtn');
-  const clearNoteBtn = document.getElementById('clearNoteBtn');
-
-  function loadNote(){
-    noteArea.value = localStorage.getItem(STORAGE.note) || '';
-    noteStatus.textContent = '상태: 불러옴';
-  }
-  function saveNote(){
-    localStorage.setItem(STORAGE.note, noteArea.value);
-    noteStatus.textContent = '상태: 저장됨';
-  }
-  function clearNote(){
-    noteArea.value = '';
-    saveNote();
-  }
-
-  noteArea.addEventListener('input', () => noteStatus.textContent = '상태: 수정됨(미저장)');
-  saveNoteBtn.addEventListener('click', saveNote);
-  clearNoteBtn.addEventListener('click', clearNote);
-
-  // Ctrl+S 저장
-  document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key.toLowerCase() === 's'){
-      const noteOpen = document.getElementById('notepadWindow').classList.contains('is-open');
-      if (noteOpen){
-        e.preventDefault();
-        saveNote();
-      }
+      document.getElementById('rpsResult').textContent = result;
     }
-  });
 
-  /* -------------------------
-   *  Todo (done + persist)
-   * ------------------------- */
-  const todoInput = document.getElementById('todoInput');
-  const todoList = document.getElementById('todoList');
-  const todoStatus = document.getElementById('todoStatus');
-  const addTodoBtn = document.getElementById('addTodoBtn');
-
-  function loadTodos(){
-    let data = [];
-    try { data = JSON.parse(localStorage.getItem(STORAGE.todos) || '[]'); } catch {}
-    renderTodos(data);
-  }
-  function saveTodos(){
-    const items = [...todoList.querySelectorAll('.todo-item')].map(li => ({
-      text: li.querySelector('.todo-text').textContent,
-      done: li.classList.contains('done'),
-    }));
-    localStorage.setItem(STORAGE.todos, JSON.stringify(items));
-    todoStatus.textContent = `상태: 저장됨 (${items.filter(x=>!x.done).length}개 남음)`;
-  }
-
-  function renderTodos(items){
-    todoList.innerHTML = '';
-    for (const item of items){
-      const li = document.createElement('li');
-      li.className = 'todo-item' + (item.done ? ' done' : '');
-
-      const chk = document.createElement('input');
-      chk.type = 'checkbox';
-      chk.checked = !!item.done;
-
-      const span = document.createElement('span');
-      span.className = 'todo-text';
-      span.textContent = item.text;
-
-      const spacer = document.createElement('span');
-      spacer.className = 'todo-spacer';
-
-      const del = document.createElement('button');
-      del.className = 'btn98';
-      del.textContent = '삭제';
-
-      chk.addEventListener('change', () => {
-        li.classList.toggle('done', chk.checked);
-        saveTodos();
+    /* -------------------------
+       채팅(로컬 저장)
+    ------------------------- */
+    const CHAT_KEY = 'jsp275_chat';
+    function loadChat(){
+      const raw = localStorage.getItem(CHAT_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      const log = document.getElementById('chatLog');
+      log.innerHTML = '';
+      arr.forEach(msg => {
+        const div = document.createElement('div');
+        div.textContent = msg;
+        log.appendChild(div);
       });
-
-      del.addEventListener('click', () => {
-        li.remove();
-        saveTodos();
-      });
-
-      li.appendChild(chk);
-      li.appendChild(span);
-      li.appendChild(spacer);
-      li.appendChild(del);
-      todoList.appendChild(li);
+      log.scrollTop = log.scrollHeight;
     }
-    todoStatus.textContent = `상태: 불러옴 (${items.filter(x=>!x.done).length}개 남음)`;
-  }
+    function saveChat(arr){
+      localStorage.setItem(CHAT_KEY, JSON.stringify(arr));
+    }
+    function sendChat(){
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if(!text) return;
 
-  function addTodo(){
-    const text = todoInput.value.trim();
-    if (!text) return;
+      const raw = localStorage.getItem(CHAT_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      const stamp = new Date();
+      const hh = String(stamp.getHours()).padStart(2,'0');
+      const mm = String(stamp.getMinutes()).padStart(2,'0');
+      arr.push(`[${hh}:${mm}] ${text}`);
+      saveChat(arr);
 
-    const current = [...todoList.querySelectorAll('.todo-item')].map(li => ({
-      text: li.querySelector('.todo-text').textContent,
-      done: li.classList.contains('done')
-    }));
-    current.unshift({text, done:false});
-    renderTodos(current);
-    saveTodos();
-
-    todoInput.value = '';
-    todoInput.focus();
-  }
-
-  addTodoBtn.addEventListener('click', addTodo);
-  todoInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') addTodo();
-  });
-
-  /* -------------------------
-   *  Blog (list + search)
-   * ------------------------- */
-  const posts = [
-    {title: '첫 번째 글', content: '행복은 습관이다. 그것을 몸에 지니라. - 엘버트 허버드'},
-    {title: '두 번째 글', content: '모든 위대한 것들은 작은 시작에서 비롯된다. - 플라톤'},
-    {title: '세 번째 글', content: '우리는 변화를 두려워하지 말아야 한다. - 톨스토이'},
-    {title: '네 번째 글', content: '지식은 힘이다. - 프랜시스 베이컨'},
-    {title: '다섯 번째 글', content: '길을 잃는다는 것은 곧 새로운 길을 찾는 것이다. - 톨스토이'}
-  ];
-  const postList = document.getElementById('postList');
-  const postSearch = document.getElementById('postSearch');
-  const blogStatus = document.getElementById('blogStatus');
-  const postTitle = document.getElementById('postTitle');
-  const postBody = document.getElementById('postBody');
-
-  function openPost(index){
-    const p = posts[index];
-    if (!p) return;
-    postTitle.textContent = p.title;
-    postBody.textContent = p.content;
-    openWindow('postWindow');
-  }
-
-  function renderPostList(filter=''){
-    const q = filter.trim().toLowerCase();
-    postList.innerHTML = '';
-    let shown = 0;
-
-    posts.forEach((p, idx) => {
-      const hay = (p.title + ' ' + p.content).toLowerCase();
-      if (q && !hay.includes(q)) return;
-
-      shown++;
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = '#';
-      a.textContent = p.title;
-      a.addEventListener('click', (e) => { e.preventDefault(); openPost(idx); });
-      li.appendChild(a);
-      postList.appendChild(li);
+      input.value = '';
+      loadChat();
+    }
+    function clearChat(){
+      localStorage.removeItem(CHAT_KEY);
+      loadChat();
+    }
+    document.getElementById('chatInput').addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') sendChat();
     });
 
-    blogStatus.textContent = `글: ${shown}개 표시 / 전체 ${posts.length}개`;
-  }
+    /* -------------------------
+       창 열고 닫기
+    ------------------------- */
+    let zTop = 80;
+    function openWindow(id){
+      const w = document.getElementById(id);
+      if(!w) return;
+      w.style.display = 'block';
+      bringToFront(w);
 
-  postSearch.addEventListener('input', () => renderPostList(postSearch.value));
-
-  /* -------------------------
-   *  Calculator (no eval)
-   * ------------------------- */
-  const calcDisplay = document.getElementById('calcDisplay');
-  let calcBuf = '';
-
-  const prec = { '+':1, '-':1, '*':2, '/':2 };
-  function tokenize(expr){
-    const tokens = [];
-    let i=0;
-    while (i < expr.length){
-      const ch = expr[i];
-      if (ch === ' ') { i++; continue; }
-
-      // number (supports leading unary minus handled later)
-      if (/[0-9.]/.test(ch)){
-        let j=i;
-        while (j < expr.length && /[0-9.]/.test(expr[j])) j++;
-        const num = expr.slice(i,j);
-        if ((num.match(/\./g)||[]).length > 1) throw new Error('잘못된 소수점');
-        tokens.push({t:'n', v:parseFloat(num)});
-        i=j; continue;
-      }
-
-      if ('+-*/()'.includes(ch)){
-        tokens.push({t:'op', v:ch});
-        i++; continue;
-      }
-
-      throw new Error('허용되지 않는 문자');
+      if(id === 'notepadWin') loadNote();
+      if(id === 'todoWin') loadTodos();
+      if(id === 'calcWin') refreshCalc();
     }
-    return tokens;
-  }
-
-  // Shunting-yard to RPN with unary minus support
-  function toRPN(tokens){
-    const out = [];
-    const stack = [];
-    for (let i=0; i<tokens.length; i++){
-      const tok = tokens[i];
-      if (tok.t === 'n'){ out.push(tok); continue; }
-
-      const op = tok.v;
-
-      // unary minus: if '-' and (start or previous is operator '(')
-      const prev = tokens[i-1];
-      const isUnaryMinus = (op === '-') && (!prev || (prev.t==='op' && prev.v !== ')'));
-      if (isUnaryMinus){
-        // represent as (0 - x)
-        out.push({t:'n', v:0});
-      }
-
-      if (op === '('){
-        stack.push(op);
-        continue;
-      }
-      if (op === ')'){
-        while (stack.length && stack[stack.length-1] !== '('){
-          out.push({t:'op', v:stack.pop()});
-        }
-        if (!stack.length) throw new Error('괄호 불일치');
-        stack.pop(); // remove '('
-        continue;
-      }
-
-      // normal operator
-      while (stack.length){
-        const top = stack[stack.length-1];
-        if (top === '(') break;
-        if (prec[top] >= prec[op]) out.push({t:'op', v:stack.pop()});
-        else break;
-      }
-      stack.push(op);
+    function closeWindow(id){
+      const w = document.getElementById(id);
+      if(!w) return;
+      w.style.display = 'none';
+    }
+    function bringToFront(el){
+      zTop += 1;
+      el.style.zIndex = zTop;
     }
 
-    while (stack.length){
-      const top = stack.pop();
-      if (top === '(') throw new Error('괄호 불일치');
-      out.push({t:'op', v:top});
-    }
-    return out;
-  }
+    /* -------------------------
+       드래그 이동(98.css는 JS 없음 → 우리가 붙임)
+    ------------------------- */
+    function makeDraggable(win){
+      const bar = win.querySelector('.title-bar');
+      if(!bar) return;
 
-  function evalRPN(rpn){
-    const st = [];
-    for (const tok of rpn){
-      if (tok.t==='n'){ st.push(tok.v); continue; }
-      const b = st.pop();
-      const a = st.pop();
-      if (a === undefined || b === undefined) throw new Error('식이 불완전함');
-      let r;
-      switch(tok.v){
-        case '+': r = a + b; break;
-        case '-': r = a - b; break;
-        case '*': r = a * b; break;
-        case '/': r = a / b; break;
-        default: throw new Error('연산자 오류');
+      let dragging = false;
+      let ox = 0, oy = 0;
+
+      bar.addEventListener('mousedown', (e)=>{
+        dragging = true;
+        bringToFront(win);
+        const rect = win.getBoundingClientRect();
+        ox = e.clientX - rect.left;
+        oy = e.clientY - rect.top;
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+
+      function onMove(e){
+        if(!dragging) return;
+        win.style.left = (e.clientX - ox) + 'px';
+        win.style.top  = (e.clientY - oy) + 'px';
       }
-      if (!Number.isFinite(r)) throw new Error('계산 오류');
-      st.push(r);
-    }
-    if (st.length !== 1) throw new Error('식이 불완전함');
-    return st[0];
-  }
+      function onUp(){
+        dragging = false;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
 
-  function calcUpdate(){
-    calcDisplay.textContent = calcBuf || '0';
-  }
+      win.addEventListener('mousedown', ()=> bringToFront(win));
+    }
 
-  function calcPress(k){
-    if (k === 'ac'){
-      calcBuf = '';
-      calcUpdate();
-      return;
+    /* -------------------------
+       설정: 배경
+    ------------------------- */
+    function applyWallpaper(cls){
+      document.body.classList.remove('wallpaper-stripes','wallpaper-teal','wallpaper-dark');
+      document.body.classList.add(cls);
+      localStorage.setItem('jsp275_wallpaper', cls);
     }
-    if (k === 'bk'){
-      calcBuf = calcBuf.slice(0,-1);
-      calcUpdate();
-      return;
+
+    /* -------------------------
+       메모장(로컬 저장)
+    ------------------------- */
+    const NOTE_KEY = 'jsp275_note';
+    function saveNote(){
+      if(!document.getElementById('optAutosave')?.checked) return;
+      localStorage.setItem(NOTE_KEY, document.getElementById('noteArea').value || '');
     }
-    if (k === '='){
+    function loadNote(){
+      document.getElementById('noteArea').value = localStorage.getItem(NOTE_KEY) || '';
+    }
+    document.getElementById('noteArea').addEventListener('input', ()=> {
+      if(document.getElementById('optAutosave')?.checked) saveNote();
+    });
+
+    /* -------------------------
+       할일(로컬 저장)
+    ------------------------- */
+    const TODO_KEY = 'jsp275_todos';
+    function addTodo(){
+      const input = document.getElementById('todoInput');
+      const text = input.value.trim();
+      if(!text) return;
+      const arr = JSON.parse(localStorage.getItem(TODO_KEY) || '[]');
+      arr.push(text);
+      localStorage.setItem(TODO_KEY, JSON.stringify(arr));
+      input.value = '';
+      loadTodos();
+    }
+    function loadTodos(){
+      const arr = JSON.parse(localStorage.getItem(TODO_KEY) || '[]');
+      const ul = document.getElementById('todoList');
+      ul.innerHTML = '';
+      arr.forEach((t, i)=>{
+        const li = document.createElement('li');
+        li.textContent = t + ' ';
+        const del = document.createElement('button');
+        del.textContent = '삭제';
+        del.onclick = ()=>{
+          const next = JSON.parse(localStorage.getItem(TODO_KEY) || '[]');
+          next.splice(i,1);
+          localStorage.setItem(TODO_KEY, JSON.stringify(next));
+          loadTodos();
+        };
+        li.appendChild(del);
+        ul.appendChild(li);
+      });
+    }
+    function clearTodos(){
+      localStorage.removeItem(TODO_KEY);
+      loadTodos();
+    }
+
+    /* -------------------------
+       계산기(보안상 eval 대신 “허용문자만” 처리)
+    ------------------------- */
+    let calcBuffer = '';
+    function refreshCalc(){
+      document.getElementById('calcDisplay').textContent = calcBuffer || '0';
+    }
+    function pressKey(k){
+      // 허용: 숫자/연산자/괄호/점
+      const allowed = /^[0-9+\-*/().]$/;
+      if(!allowed.test(k)) return;
+      calcBuffer += k;
+      refreshCalc();
+    }
+    function safeEval(expr){
+      // 숫자/공백/연산자/괄호/점만 허용
+      if(!/^[0-9+\-*/().\s]+$/.test(expr)) throw new Error('bad');
+      // 위험한 연산자 연속 방지(대충)
+      const compact = expr.replace(/\s+/g,'');
+      if(/(\*\*|\/\/)/.test(compact)) throw new Error('bad');
+      const v = Function('return (' + expr + ')')();
+      if(!Number.isFinite(v)) throw new Error('bad');
+      return v;
+    }
+    function calculate(){
       try{
-        const tokens = tokenize(calcBuf);
-        const rpn = toRPN(tokens);
-        const res = evalRPN(rpn);
-        // 보기 좋은 포맷
-        const pretty = (Math.abs(res) < 1e12) ? +res.toFixed(10) : res;
-        calcBuf = String(pretty);
-        calcUpdate();
+        const v = safeEval(calcBuffer);
+        calcBuffer = String(v);
+        refreshCalc();
       }catch(e){
-        calcBuf = '';
-        calcDisplay.textContent = '오류';
+        calcBuffer = '';
+        document.getElementById('calcDisplay').textContent = '오류';
       }
-      return;
+    }
+    function clearCalc(){
+      calcBuffer = '';
+      refreshCalc();
     }
 
-    // 입력 규칙: 연산자 연속 방지(대충)
-    const last = calcBuf.slice(-1);
-    const isOp = (c) => '+-*/'.includes(c);
+    /* -------------------------
+       그림판
+    ------------------------- */
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+    let drawColor = '#000000';
 
-    if (isOp(k) && calcBuf === '' && k !== '-') return; // 시작은 음수만 허용
-    if (isOp(k) && isOp(last)) return;                  // 연산자 연속 금지(단순)
-    if (k === '.' && (last === '.' )) return;
+    function setDrawColor(c){ drawColor = c; }
 
-    calcBuf += k;
-    calcUpdate();
-  }
+    function initCanvas(){
+      const canvas = document.getElementById('drawCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.lineWidth = 2;
 
-  document.querySelectorAll('#calcWindow [data-k]').forEach(btn => {
-    btn.addEventListener('click', () => calcPress(btn.dataset.k));
-  });
+      function pos(e){
+        const r = canvas.getBoundingClientRect();
+        return [e.clientX - r.left, e.clientY - r.top];
+      }
 
-  /* -------------------------
-   *  Drawing (undo + eraser + save png)
-   * ------------------------- */
-  const canvas = document.getElementById('drawCanvas');
-  const ctx = canvas.getContext('2d');
-  const drawStatus = document.getElementById('drawStatus');
-  const brushSize = document.getElementById('brushSize');
-  const eraserBtn = document.getElementById('eraserBtn');
-  const undoBtn = document.getElementById('undoBtn');
-  const clearCanvasBtn = document.getElementById('clearCanvasBtn');
-  const savePngBtn = document.getElementById('savePngBtn');
-
-  let drawColor = '#000000';
-  let isEraser = false;
-  let drawing = false;
-  let lastX=0, lastY=0;
-  const history = [];
-
-  function pushHistory(){
-    if (history.length > 30) history.shift();
-    history.push(ctx.getImageData(0,0,canvas.width,canvas.height));
-    undoBtn.disabled = history.length === 0;
-  }
-  function setStatus(){
-    drawStatus.textContent = `색상: ${drawColor} / 모드: ${isEraser ? '지우개' : '펜'} / 굵기: ${brushSize.value}`;
-  }
-
-  function getPos(e){
-    const r = canvas.getBoundingClientRect();
-    return [e.clientX - r.left, e.clientY - r.top];
-  }
-
-  function beginStroke(e){
-    drawing = true;
-    pushHistory();
-    [lastX,lastY] = getPos(e);
-    canvas.setPointerCapture(e.pointerId);
-  }
-  function moveStroke(e){
-    if (!drawing) return;
-    const [x,y] = getPos(e);
-
-    ctx.lineWidth = Number(brushSize.value);
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    if (isEraser){
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.strokeStyle = 'rgba(0,0,0,1)';
-    } else {
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.strokeStyle = drawColor;
+      canvas.addEventListener('mousedown', (e)=>{
+        drawing = true;
+        [lastX,lastY] = pos(e);
+      });
+      canvas.addEventListener('mousemove', (e)=>{
+        if(!drawing) return;
+        const [x,y] = pos(e);
+        ctx.strokeStyle = drawColor;
+        ctx.beginPath();
+        ctx.moveTo(lastX,lastY);
+        ctx.lineTo(x,y);
+        ctx.stroke();
+        [lastX,lastY] = [x,y];
+      });
+      canvas.addEventListener('mouseup', ()=> drawing=false);
+      canvas.addEventListener('mouseleave', ()=> drawing=false);
     }
 
-    ctx.beginPath();
-    ctx.moveTo(lastX,lastY);
-    ctx.lineTo(x,y);
-    ctx.stroke();
+    function clearCanvas(){
+      const canvas = document.getElementById('drawCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
 
-    lastX=x; lastY=y;
-  }
-  function endStroke(){
-    drawing = false;
-    ctx.globalCompositeOperation = 'source-over';
-  }
+    /* -------------------------
+       초기화
+    ------------------------- */
+    window.addEventListener('load', ()=>{
+      // wallpaper restore
+      const wp = localStorage.getItem('jsp275_wallpaper');
+      if(wp){
+        document.getElementById('wallpaperSel').value = wp;
+        applyWallpaper(wp);
+      }
 
-  canvas.addEventListener('pointerdown', beginStroke);
-  canvas.addEventListener('pointermove', moveStroke);
-  canvas.addEventListener('pointerup', endStroke);
-  canvas.addEventListener('pointercancel', endStroke);
-  canvas.addEventListener('pointerleave', endStroke);
+      renderPostList();
+      loadTodos();
+      loadNote();
+      loadChat();
+      initCanvas();
 
-  document.querySelectorAll('.swatch').forEach(s => {
-    s.addEventListener('click', () => {
-      drawColor = s.dataset.color;
-      isEraser = false;
-      eraserBtn.textContent = '지우개';
-      setStatus();
+      // draggable all floating windows
+      document.querySelectorAll('.floating').forEach(makeDraggable);
     });
-  });
-
-  brushSize.addEventListener('input', setStatus);
-
-  eraserBtn.addEventListener('click', () => {
-    isEraser = !isEraser;
-    eraserBtn.textContent = isEraser ? '펜으로' : '지우개';
-    setStatus();
-  });
-
-  undoBtn.addEventListener('click', () => {
-    const img = history.pop();
-    if (!img) return;
-    ctx.putImageData(img, 0, 0);
-    undoBtn.disabled = history.length === 0;
-  });
-
-  clearCanvasBtn.addEventListener('click', () => {
-    pushHistory();
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-  });
-
-  savePngBtn.addEventListener('click', () => {
-    const a = document.createElement('a');
-    a.download = 'jsp275_drawing.png';
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-  });
-
-  undoBtn.disabled = true;
-  setStatus();
-
-  /* -------------------------
-   *  Initialize
-   * ------------------------- */
-  buildStartMenu();
-  applySavedPositions();
-  loadNote();
-  loadTodos();
-  renderPostList('');
-
-  // 처음 켤 때 열어둘 창(없으면 About만)
-  const state = getState();
-  const anyOpen = Object.values(state.open || {}).some(Boolean);
-  if (!anyOpen){
-    openWindow('about');
-    openWindow('game', {focus:false});
-    openWindow('now', {focus:false});
-    openWindow('links', {focus:false});
-    openWindow('blogWindow', {focus:false});
-  } else {
-    // 마지막 활성 창 복구는 단순히 제일 위로 보정
-    const openNow = windows.filter(w => (state.open||{})[w.id]);
-    if (openNow.length) focusWindow(openNow[openNow.length-1].id);
-  }
-
-  // 리사이즈 시 창이 화면 밖이면 보정
-  window.addEventListener('resize', () => {
-    for (const w of windows){
-      if (w.el.classList.contains('is-open') && !w.el.classList.contains('is-minimized')){
-        clampToViewport(w.el);
-      }
-    }
-  });
-
-})();
-</script>
+  </script>
 </body>
 </html>
