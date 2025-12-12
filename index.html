@@ -9,17 +9,16 @@
   <link rel="stylesheet" href="https://unpkg.com/98.css" />
 
   <style>
-    /* ✅ 98.css는 “스타일 시스템”이라, 우리는 레이아웃/배경만 최소로 건드립니다 */
     body{
       margin:0;
       min-height:100vh;
       padding:12px;
       box-sizing:border-box;
-      background:#008080; /* Win98-ish teal */
+      background:#008080;
       overflow:hidden;
     }
 
-    /* 배경 프리셋(설정에서 바꿀 수 있게) */
+    /* 배경 프리셋 */
     body.wallpaper-stripes{
       background:
         repeating-linear-gradient(45deg, #dcdcdc 0 10px, #c0c0c0 10px 20px),
@@ -30,19 +29,19 @@
       background: radial-gradient(circle at 30% 20%, #1a2a44, #0a0f1a 70%);
     }
 
-    /* 메인 “셸” 창 */
+    /* 메인 셸 창 */
     #shell{
-      width:min(1200px, 100%);
+      width:min(1240px, 100%);
       height:calc(100vh - 24px);
       margin:0 auto;
       display:flex;
       flex-direction:column;
     }
 
-    /* 셸 내부 그리드(스케치 구조) */
+    /* 셸 내부 그리드(오버플로우 방지용: 오른쪽 폭 살짝 키움) */
     .shell-body{
       display:grid;
-      grid-template-columns: 170px 1fr 220px;
+      grid-template-columns: 180px 1fr 260px; /* ✅ 오른쪽 칸 확장 */
       gap:10px;
       padding:10px;
       height:100%;
@@ -50,11 +49,9 @@
       min-height:0;
     }
 
-    .panel{
-      min-height:0;
-    }
+    .panel{ min-height:0; }
 
-    /* 왼쪽 버튼: 큼직하게 */
+    /* 왼쪽 버튼 */
     .big-btn{
       width:100%;
       height:72px;
@@ -65,22 +62,20 @@
       margin-bottom:8px;
     }
 
-    /* 가운데 탭/콘텐츠 */
+    /* 가운데 탭 */
     .center{
       display:flex;
       flex-direction:column;
       min-height:0;
     }
-    .center .tabbar{
-      margin:0 0 6px 0;
-    }
+    .center .tabbar{ margin:0 0 6px 0; }
     .tabpanel{
       flex:1;
       min-height:0;
       overflow:auto;
     }
 
-    /* 블로그 탭 내부: 리스트/프리뷰 2분할 */
+    /* 블로그 탭 2분할 */
     .blog-split{
       display:grid;
       grid-template-columns: 240px 1fr;
@@ -91,40 +86,58 @@
       overflow:auto;
     }
 
-    /* 오른쪽: 게임/채팅 */
-    .right fieldset{
-      margin:0 0 10px 0;
+    /* ✅ 오른쪽(게임/채팅) 오버플로우 방지 */
+    .right .field-row{
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .right .field-row > button{
+      flex:1 1 30%;
+      min-width:0;
     }
     .chat-log{
       height:160px;
       padding:6px;
       overflow:auto;
       background:#fff;
+      word-break:break-word;
     }
     .chat-row{
       display:flex;
       gap:6px;
       margin-top:6px;
     }
-    .chat-row input{
-      flex:1;
-    }
+    .chat-row input{ flex:1; min-width:0; }
 
-    /* 상태바(스케치 하단) */
+    /* 상태바 */
     .status-bar{
       margin:0 10px 10px 10px;
     }
 
-    /* 플로팅 창(그림판/설정/앱들) */
+    /* 플로팅 창 */
     .floating{
       position:absolute;
       display:none;
       z-index:50;
       min-width:260px;
+      max-width:calc(100vw - 24px);
     }
-    .floating .window-body{
-      padding:10px;
+    .floating .window-body{ padding:10px; }
+
+    /* ✅ 계산기: 버튼 크기 줄여서 삐져나옴 해결 */
+    .calc-grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:5px;
+      margin-top:8px;
     }
+    #calcWin .calc-grid button{
+      padding:2px 0;        /* ✅ 작게 */
+      font-size:12px;       /* ✅ 작게 */
+      min-width:0;
+      line-height:1.1;
+    }
+    #calcWin .status-field-border{ font-variant-numeric:tabular-nums; }
 
     /* 그림판 캔버스 */
     #drawCanvas{
@@ -146,33 +159,85 @@
       padding:0;
     }
 
-    /* 작은 화면 대응: 세로로 쌓기 */
-    @media (max-width: 900px){
+    /* ✅ 레트로 장식(배지/스티커 느낌) */
+    .retro-decor{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+      align-items:center;
+    }
+    .badge{
+      border:1px solid #000;
+      background:#fff;
+      padding:4px 6px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+    }
+    .badge svg{ display:block; }
+    .marquee-wrap{
+      margin-top:10px;
+      border:1px solid #000;
+      background:#fff;
+      padding:4px 6px;
+    }
+
+    /* ✅ 뮤직 플레이어(Win98 느낌) */
+    .player-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:8px;
+    }
+    .player-display{
+      padding:6px 8px;
+      background:#000;
+      color:#00ff66;
+      font-family: "Lucida Console", Monaco, monospace;
+      font-size:12px;
+      border:1px solid #000;
+    }
+    .player-controls{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .player-controls button{ min-width:64px; }
+    .player-sliders{
+      display:grid;
+      grid-template-columns: 64px 1fr;
+      gap:6px;
+      align-items:center;
+    }
+    input[type="range"]{ width:100%; }
+
+    @media (max-width: 980px){
       body{ overflow:auto; }
       #shell{ height:auto; }
-      .shell-body{
-        grid-template-columns: 1fr;
-      }
+      .shell-body{ grid-template-columns: 1fr; }
+      .blog-split{ grid-template-columns: 1fr; }
+      .right .field-row > button{ flex:1 1 32%; }
     }
   </style>
 </head>
 
 <body class="wallpaper-stripes">
-  <!-- ✅ 메인 셸(스케치의 큰 창) -->
   <div class="window" id="shell">
     <div class="title-bar">
       <div class="title-bar-text">JSP275 Desktop</div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" title="Minimize"></button>
         <button aria-label="Maximize" title="Maximize"></button>
-        <button aria-label="Close" title="Close" onclick="alert('이 창은 닫기 비활성(셸) 입니다 🙂')"></button>
+        <button aria-label="Close" title="Close" onclick="alert('이 창(셸)은 닫기 비활성입니다 🙂')"></button>
       </div>
     </div>
 
     <div class="window-body shell-body">
       <!-- LEFT -->
       <div class="panel left">
-        <button class="big-btn" onclick="openWindow('drawWin')">그림</button>
+        <button class="big-btn" onclick="openWindow('drawWin')">그림판</button>
         <button class="big-btn" onclick="openWindow('settingsWin')">설정 메뉴</button>
 
         <fieldset>
@@ -187,7 +252,7 @@
         <fieldset>
           <legend>링크</legend>
           <ul class="tree-view">
-            <li><a href="https://jsp275.github.io" target="_blank" rel="noreferrer">Blog</a></li>
+            <!-- ✅ Blog 링크 제거 -->
             <li><a href="https://itch.io" target="_blank" rel="noreferrer">Itch.io</a></li>
             <li><a href="https://youtu.be/dQw4w9WgXcQ" target="_blank" rel="noreferrer">YouTube</a></li>
           </ul>
@@ -207,26 +272,84 @@
             <!-- MAIN -->
             <section id="tab-main" class="tab-page">
               <h3 style="margin:0 0 6px 0;">JSP275의 메인로그</h3>
+
               <div class="field-border" style="padding:10px;">
-                <p style="margin-top:0;">
-                  여기는 “중앙 작업 영역”이에요. 왼쪽/오른쪽 버튼으로 앱을 열거나,
-                  상단 탭으로 콘텐츠를 바꿀 수 있어요.
+                <!-- ✅ 메인로그 문구 교체 -->
+                <p style="margin:0;">
+                  안녕하세요, 사이트에 온걸 환영합니다. 한번 둘러보시죠 :)
                 </p>
-                <ul>
-                  <li>왼쪽: 그림/설정 + 앱 런처</li>
-                  <li>오른쪽: 게임(가위바위보) + 로컬 채팅(저장됨)</li>
-                  <li>아래: 상태바(지금/이름/시간)</li>
-                </ul>
+
+                <!-- ✅ 레트로 장식(배지 + 마퀴 느낌) -->
+                <div class="retro-decor">
+                  <div class="badge" title="Under Construction">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                      <rect width="18" height="18" fill="#ffd800"/>
+                      <path d="M-2 4 L4 -2 M2 18 L18 2 M10 18 L18 10" stroke="#000" stroke-width="3"/>
+                    </svg>
+                    <span><b>UNDER CONSTRUCTION</b></span>
+                  </div>
+
+                  <div class="badge" title="Best viewed">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                      <rect width="18" height="18" fill="#000080"/>
+                      <rect x="3" y="4" width="12" height="8" fill="#c0c0c0" stroke="#fff" stroke-width="1"/>
+                      <rect x="6" y="13" width="6" height="2" fill="#808080"/>
+                    </svg>
+                    <span>Best viewed in 800×600</span>
+                  </div>
+
+                  <div class="badge" title="98.css vibe">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                      <rect width="18" height="18" fill="#c0c0c0"/>
+                      <rect x="3" y="3" width="12" height="12" fill="#fff" stroke="#000" stroke-width="1"/>
+                      <path d="M5 9h8" stroke="#000" stroke-width="2"/>
+                    </svg>
+                    <span>98.css</span>
+                  </div>
+                </div>
+
+                <div class="marquee-wrap">
+                  <marquee behavior="scroll" direction="left" scrollamount="4">
+                    JSP275 Desktop - 기록, 개발, 그리고 작은 실험들…
+                  </marquee>
+                </div>
               </div>
 
-              <fieldset style="margin-top:10px;">
-                <legend>Now Playing</legend>
-                <ul class="tree-view">
-                  <li>[M] Aero Groove Mix</li>
-                  <li>[G] Old School Adventure</li>
-                  <li>[L] Retro Tech Blog</li>
-                </ul>
-              </fieldset>
+              <!-- ✅ Now Playing → 실제 뮤직 플레이어 -->
+              <div class="window" style="margin-top:10px;">
+                <div class="title-bar">
+                  <div class="title-bar-text">Now Playing</div>
+                  <div class="title-bar-controls">
+                    <button aria-label="Help" title="Help" onclick="alert('tracks[]에 음악 파일 경로를 넣으면 됩니다 🙂')"></button>
+                  </div>
+                </div>
+                <div class="window-body player-grid">
+                  <div class="player-display" id="playerDisplay">
+                    STOP · --:-- / --:-- · (no track)
+                  </div>
+
+                  <div class="field-row-stacked">
+                    <label for="trackSelect">Track</label>
+                    <select id="trackSelect"></select>
+                  </div>
+
+                  <div class="player-controls">
+                    <button class="default" id="btnPlayPause" onclick="togglePlay()">Play</button>
+                    <button id="btnStop" onclick="stopAudio()">Stop</button>
+                    <button onclick="prevTrack()">Prev</button>
+                    <button onclick="nextTrack()">Next</button>
+                  </div>
+
+                  <div class="player-sliders">
+                    <label for="seekBar">Seek</label>
+                    <input id="seekBar" type="range" min="0" max="1000" value="0" />
+                    <label for="volBar">Volume</label>
+                    <input id="volBar" type="range" min="0" max="100" value="60" />
+                  </div>
+
+                  <audio id="audio" preload="metadata"></audio>
+                </div>
+              </div>
             </section>
 
             <!-- BLOG -->
@@ -274,11 +397,14 @@
         <fieldset>
           <legend>게임</legend>
           <p style="margin-top:0;">가위·바위·보</p>
+
+          <!-- ✅ 버튼 래핑 + 폭 조절로 삐져나옴 해결 -->
           <div class="field-row">
             <button onclick="playRPS('가위')">가위</button>
             <button onclick="playRPS('바위')">바위</button>
             <button onclick="playRPS('보')">보</button>
           </div>
+
           <div class="status-field-border" style="padding:6px; margin-top:6px;">
             <span id="rpsResult">결과가 여기에 표시됩니다.</span>
           </div>
@@ -298,17 +424,13 @@
       </div>
     </div>
 
-    <!-- ✅ 하단 상태바(스케치의 바닥 줄) -->
+    <!-- ✅ 상태바 문구 변경 -->
     <div class="status-bar">
-      <p class="status-bar-field" style="width:120px;">지금</p>
-      <p class="status-bar-field" style="flex:1;">JSP275</p>
+      <p class="status-bar-field" style="flex:1;">이 사이트는 여전히 만들어지는 중 입니다</p>
+      <p class="status-bar-field" style="width:110px;">JSP275</p>
       <p class="status-bar-field" id="clock" style="width:120px; text-align:right;">--:--:--</p>
     </div>
   </div>
-
-  <!-- =======================
-       플로팅 앱들 (98.css 창)
-       ======================= -->
 
   <!-- 그림판 -->
   <div class="window floating" id="drawWin" style="left:80px; top:90px; width:420px;">
@@ -360,15 +482,6 @@
           </select>
         </div>
       </fieldset>
-
-      <fieldset style="margin-top:10px;">
-        <legend>옵션</legend>
-        <div class="field-row">
-          <input id="optAutosave" type="checkbox" checked />
-          <label for="optAutosave">메모/할일 자동저장</label>
-        </div>
-      </fieldset>
-
       <div class="field-row" style="margin-top:10px; justify-content:flex-end;">
         <button class="default" onclick="closeWindow('settingsWin')">확인</button>
       </div>
@@ -427,7 +540,8 @@
     </div>
     <div class="window-body">
       <div class="status-field-border" style="padding:8px; text-align:right;" id="calcDisplay">0</div>
-      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:8px;">
+
+      <div class="calc-grid">
         <button onclick="pressKey('7')">7</button>
         <button onclick="pressKey('8')">8</button>
         <button onclick="pressKey('9')">9</button>
@@ -461,18 +575,13 @@
     ------------------------- */
     const tabLinks = document.querySelectorAll('#tabs a[data-tab]');
     const tabPages = document.querySelectorAll('.tab-page');
-
     tabLinks.forEach(a => {
       a.addEventListener('click', (e) => {
         e.preventDefault();
-        const key = a.dataset.tab;
-
-        // aria-selected 처리(98.css 탭 규칙)
         document.querySelectorAll('#tabs li[role="tab"]').forEach(li => li.setAttribute('aria-selected', 'false'));
         a.closest('li').setAttribute('aria-selected', 'true');
-
         tabPages.forEach(p => p.style.display = 'none');
-        document.getElementById('tab-' + key).style.display = 'block';
+        document.getElementById('tab-' + a.dataset.tab).style.display = 'block';
       });
     });
 
@@ -499,7 +608,6 @@
       {title:'네 번째 글', content:'지식은 힘이다. - 프랜시스 베이컨'},
       {title:'다섯 번째 글', content:'길을 잃는다는 것은 곧 새로운 길을 찾는 것이다. - 톨스토이'},
     ];
-
     function renderPostList(){
       const ul = document.getElementById('postList');
       ul.innerHTML = '';
@@ -514,7 +622,6 @@
       });
       openPost(0);
     }
-
     function openPost(index){
       const p = posts[index];
       if(!p) return;
@@ -559,7 +666,6 @@
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
       if(!text) return;
-
       const raw = localStorage.getItem(CHAT_KEY);
       const arr = raw ? JSON.parse(raw) : [];
       const stamp = new Date();
@@ -567,7 +673,6 @@
       const mm = String(stamp.getMinutes()).padStart(2,'0');
       arr.push(`[${hh}:${mm}] ${text}`);
       saveChat(arr);
-
       input.value = '';
       loadChat();
     }
@@ -588,7 +693,6 @@
       if(!w) return;
       w.style.display = 'block';
       bringToFront(w);
-
       if(id === 'notepadWin') loadNote();
       if(id === 'todoWin') loadTodos();
       if(id === 'calcWin') refreshCalc();
@@ -604,15 +708,12 @@
     }
 
     /* -------------------------
-       드래그 이동(98.css는 JS 없음 → 우리가 붙임)
+       드래그 이동
     ------------------------- */
     function makeDraggable(win){
       const bar = win.querySelector('.title-bar');
       if(!bar) return;
-
-      let dragging = false;
-      let ox = 0, oy = 0;
-
+      let dragging = false, ox = 0, oy = 0;
       bar.addEventListener('mousedown', (e)=>{
         dragging = true;
         bringToFront(win);
@@ -622,7 +723,6 @@
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onUp);
       });
-
       function onMove(e){
         if(!dragging) return;
         win.style.left = (e.clientX - ox) + 'px';
@@ -633,7 +733,6 @@
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
       }
-
       win.addEventListener('mousedown', ()=> bringToFront(win));
     }
 
@@ -651,15 +750,11 @@
     ------------------------- */
     const NOTE_KEY = 'jsp275_note';
     function saveNote(){
-      if(!document.getElementById('optAutosave')?.checked) return;
       localStorage.setItem(NOTE_KEY, document.getElementById('noteArea').value || '');
     }
     function loadNote(){
       document.getElementById('noteArea').value = localStorage.getItem(NOTE_KEY) || '';
     }
-    document.getElementById('noteArea').addEventListener('input', ()=> {
-      if(document.getElementById('optAutosave')?.checked) saveNote();
-    });
 
     /* -------------------------
        할일(로컬 저장)
@@ -700,23 +795,20 @@
     }
 
     /* -------------------------
-       계산기(보안상 eval 대신 “허용문자만” 처리)
+       계산기
     ------------------------- */
     let calcBuffer = '';
     function refreshCalc(){
       document.getElementById('calcDisplay').textContent = calcBuffer || '0';
     }
     function pressKey(k){
-      // 허용: 숫자/연산자/괄호/점
       const allowed = /^[0-9+\-*/().]$/;
       if(!allowed.test(k)) return;
       calcBuffer += k;
       refreshCalc();
     }
     function safeEval(expr){
-      // 숫자/공백/연산자/괄호/점만 허용
       if(!/^[0-9+\-*/().\s]+$/.test(expr)) throw new Error('bad');
-      // 위험한 연산자 연속 방지(대충)
       const compact = expr.replace(/\s+/g,'');
       if(/(\*\*|\/\/)/.test(compact)) throw new Error('bad');
       const v = Function('return (' + expr + ')')();
@@ -744,19 +836,15 @@
     let drawing = false;
     let lastX = 0, lastY = 0;
     let drawColor = '#000000';
-
     function setDrawColor(c){ drawColor = c; }
-
     function initCanvas(){
       const canvas = document.getElementById('drawCanvas');
       const ctx = canvas.getContext('2d');
       ctx.lineWidth = 2;
-
       function pos(e){
         const r = canvas.getBoundingClientRect();
         return [e.clientX - r.left, e.clientY - r.top];
       }
-
       canvas.addEventListener('mousedown', (e)=>{
         drawing = true;
         [lastX,lastY] = pos(e);
@@ -774,7 +862,6 @@
       canvas.addEventListener('mouseup', ()=> drawing=false);
       canvas.addEventListener('mouseleave', ()=> drawing=false);
     }
-
     function clearCanvas(){
       const canvas = document.getElementById('drawCanvas');
       const ctx = canvas.getContext('2d');
@@ -782,10 +869,113 @@
     }
 
     /* -------------------------
+       ✅ 뮤직 플레이어
+       - 여기 tracks의 src를 “내가 가진 mp3 경로”로 바꾸면 됩니다.
+       - 예: "./assets/music/aero-groove.mp3"
+    ------------------------- */
+    const tracks = [
+      { title: "Aero Groove Mix", src: "./assets/music/aero-groove.mp3" },
+      { title: "Old School Adventure", src: "./assets/music/old-school-adventure.mp3" },
+      { title: "Retro Tech Blog", src: "./assets/music/retro-tech-blog.mp3" },
+    ];
+
+    const audio = document.getElementById('audio');
+    const trackSelect = document.getElementById('trackSelect');
+    const playerDisplay = document.getElementById('playerDisplay');
+    const seekBar = document.getElementById('seekBar');
+    const volBar = document.getElementById('volBar');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+
+    let currentTrack = 0;
+    let seeking = false;
+
+    function fmt(t){
+      if(!Number.isFinite(t)) return "--:--";
+      const m = Math.floor(t/60);
+      const s = Math.floor(t%60);
+      return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    }
+    function updateDisplay(stateText){
+      const cur = fmt(audio.currentTime);
+      const dur = fmt(audio.duration);
+      const name = tracks[currentTrack]?.title ?? "(no track)";
+      playerDisplay.textContent = `${stateText} · ${cur} / ${dur} · ${name}`;
+    }
+
+    function loadTrack(i){
+      currentTrack = (i + tracks.length) % tracks.length;
+      trackSelect.value = String(currentTrack);
+      audio.src = tracks[currentTrack].src;
+      audio.load();
+      updateDisplay("STOP");
+      btnPlayPause.textContent = "Play";
+      seekBar.value = "0";
+    }
+
+    function togglePlay(){
+      if(!audio.src) loadTrack(0);
+      if(audio.paused){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent = "Pause";
+        updateDisplay("PLAY");
+      }else{
+        audio.pause();
+        btnPlayPause.textContent = "Play";
+        updateDisplay("PAUSE");
+      }
+    }
+
+    function stopAudio(){
+      audio.pause();
+      audio.currentTime = 0;
+      btnPlayPause.textContent = "Play";
+      updateDisplay("STOP");
+    }
+
+    function nextTrack(){
+      const wasPlaying = !audio.paused && audio.currentTime > 0;
+      loadTrack(currentTrack + 1);
+      if(wasPlaying){ audio.play().catch(()=>{}); btnPlayPause.textContent="Pause"; updateDisplay("PLAY"); }
+    }
+    function prevTrack(){
+      const wasPlaying = !audio.paused && audio.currentTime > 0;
+      loadTrack(currentTrack - 1);
+      if(wasPlaying){ audio.play().catch(()=>{}); btnPlayPause.textContent="Pause"; updateDisplay("PLAY"); }
+    }
+
+    trackSelect.addEventListener('change', () => {
+      const wasPlaying = !audio.paused && audio.currentTime > 0;
+      loadTrack(Number(trackSelect.value));
+      if(wasPlaying){ audio.play().catch(()=>{}); btnPlayPause.textContent="Pause"; updateDisplay("PLAY"); }
+    });
+
+    volBar.addEventListener('input', () => {
+      audio.volume = Number(volBar.value) / 100;
+    });
+
+    seekBar.addEventListener('input', () => { seeking = true; });
+    seekBar.addEventListener('change', () => {
+      if(Number.isFinite(audio.duration)){
+        audio.currentTime = (Number(seekBar.value)/1000) * audio.duration;
+      }
+      seeking = false;
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if(!seeking && Number.isFinite(audio.duration)){
+        const v = (audio.currentTime / audio.duration) * 1000;
+        seekBar.value = String(Math.max(0, Math.min(1000, Math.floor(v))));
+      }
+      if(!audio.paused) updateDisplay("PLAY");
+    });
+    audio.addEventListener('loadedmetadata', () => updateDisplay(audio.paused ? "STOP" : "PLAY"));
+    audio.addEventListener('ended', () => { nextTrack(); });
+
+    /* -------------------------
        초기화
     ------------------------- */
     window.addEventListener('load', ()=>{
-      // wallpaper restore
+      // 배경 복원
       const wp = localStorage.getItem('jsp275_wallpaper');
       if(wp){
         document.getElementById('wallpaperSel').value = wp;
@@ -798,8 +988,13 @@
       loadChat();
       initCanvas();
 
-      // draggable all floating windows
+      // draggable
       document.querySelectorAll('.floating').forEach(makeDraggable);
+
+      // player init
+      trackSelect.innerHTML = tracks.map((t, i) => `<option value="${i}">${t.title}</option>`).join('');
+      audio.volume = Number(volBar.value) / 100;
+      loadTrack(0);
     });
   </script>
 </body>
