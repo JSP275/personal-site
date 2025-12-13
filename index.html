@@ -198,7 +198,7 @@
     }
     input[type="range"]{ width:100%; }
 
-    /* ✅ 98 스타일 “메시지 박스” 모달 */
+    /*  98 스타일 “메시지 박스” 모달 */
     .overlay{
       position:fixed;
       inset:0;
@@ -435,14 +435,14 @@
           </div>
         </fieldset>
 
-        <!-- ✅ 방명록: giscus -->
+        <!--  방명록: giscus -->
         <fieldset>
           <legend>방명록</legend>
           <div class="sunken-panel" style="height:220px; padding:6px; background:#fff; overflow:auto;">
             <div id="giscus_container"></div>
           </div>
           <p style="margin:6px 0 0 0; font-size:12px;">
-            GitHub 계정으로 로그인하면 댓글 작성/관리 가능해요.
+            와 글써야지 
           </p>
         </fieldset>
       </div>
@@ -455,7 +455,7 @@
     </div>
   </div>
 
-  <!-- ✅ 98 스타일 메시지 박스(모달) -->
+  <!--  98 스타일 메시지 박스(모달) -->
   <div class="overlay" id="overlay" onclick="closeDialog()"></div>
   <div class="window modal" id="dialogWin" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
     <div class="title-bar">
@@ -928,7 +928,6 @@
 
     /* -------------------------
        뮤직 플레이어
-       ✅ asstes 유지
     ------------------------- */
     const tracks = [
       { title: "Cubes",         src: "/personal-site/asstes/music/cubes.mp3" },
@@ -1041,8 +1040,7 @@
     audio.addEventListener('ended', () => { nextTrack(); });
 
     /* -------------------------
-       ✅ giscus 로드 (방명록)
-       - 기존 로컬 방명록 코드는 제거됨(에러 원인 제거)
+        giscus 로드 (방명록)
     ------------------------- */
     function loadGiscus(){
       const container = document.getElementById('giscus_container');
