@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JoSePh likes 275 </title>
+  <title>JoSePh likes 275</title>
 
   <!-- 98.css -->
   <link rel="stylesheet" href="https://unpkg.com/98.css" />
@@ -82,11 +82,9 @@
       gap:10px;
       min-height:300px;
     }
-    .sunken-panel{
-      overflow:auto;
-    }
+    .sunken-panel{ overflow:auto; }
 
-    /* 오른쪽(게임/방명록) */
+    /* 오른쪽 */
     .right .field-row{
       flex-wrap:wrap;
       gap:6px;
@@ -95,19 +93,6 @@
       flex:1 1 30%;
       min-width:0;
     }
-    .chat-log{
-      height:160px;
-      padding:6px;
-      overflow:auto;
-      background:#fff;
-      word-break:break-word;
-    }
-    .chat-row{
-      display:flex;
-      gap:6px;
-      margin-top:6px;
-    }
-    .chat-row input{ flex:1; min-width:0; }
 
     /* 상태바 */
     .status-bar{
@@ -230,9 +215,7 @@
       z-index:9001;
       width:min(420px, calc(100vw - 24px));
     }
-    .modal .window-body{
-      padding:10px;
-    }
+    .modal .window-body{ padding:10px; }
     .modal .msg-row{
       display:flex;
       gap:10px;
@@ -360,7 +343,6 @@
                 <div class="title-bar">
                   <div class="title-bar-text">Now Playing</div>
                   <div class="title-bar-controls">
-                    <!-- ✅ alert 대신 98 UI 메시지 박스 -->
                     <button aria-label="Help" title="Help" onclick="openDialog(
                       'Now Playing 도움말',
                       '이 플레이어는 사이트에 올려둔 음악을 재생합니다.\n\n- Track: 곡 선택\n- Seek: 재생 위치 이동\n- Volume: 볼륨 조절\n\n※ 브라우저 자동재생 정책 때문에, 최초 1회는 Play 버튼을 직접 눌러야 할 수 있어요.'
@@ -453,33 +435,16 @@
           </div>
         </fieldset>
 
-        <!-- 방명록 기능 -->
+        <!-- ✅ 방명록: giscus -->
         <fieldset>
           <legend>방명록</legend>
-            <div class="sunken-panel" style="height:220px; padding:6px; background:#fff;">
-              <div id="giscus_container">
-                <script src="https://giscus.app/client.js"
-                  data-repo="JSP275/personal-site"
-                  data-repo-id="R_kgDOQm0wAw"
-                  data-category="Guestbook"
-                  data-category-id="DIC_kwDOQm0wA84Czuwv"
-                  data-mapping="specific"
-                  data-term="guestbook"
-                  data-strict="0"
-                  data-reactions-enabled="1"
-                  data-emit-metadata="0"
-                  data-input-position="top"
-                  data-theme="light"
-                  data-lang="ko"
-                  crossorigin="anonymous"
-                  async>
-                </script>
-              </div>
-            </div>
-
-            <p style="margin:6px 0 0 0; font-size:12px;">
-            </p>
-          </fieldset>
+          <div class="sunken-panel" style="height:220px; padding:6px; background:#fff; overflow:auto;">
+            <div id="giscus_container"></div>
+          </div>
+          <p style="margin:6px 0 0 0; font-size:12px;">
+            GitHub 계정으로 로그인하면 댓글 작성/관리 가능해요.
+          </p>
+        </fieldset>
       </div>
     </div>
 
@@ -678,11 +643,33 @@
 
     /* -------------------------
        ✅ 98 UI 메시지 박스(모달)
+       - 핵심 수정: 모달 z-index를 bringToFront가 망치지 않게 처리
     ------------------------- */
+    let zTop = 80;
+
+    function bringToFront(el){
+      if(!el) return;
+
+      // ✅ 모달은 항상 overlay 위로 고정
+      if(el.classList.contains('modal')){
+        el.style.zIndex = 9001;
+        return;
+      }
+
+      zTop += 1;
+      el.style.zIndex = zTop;
+    }
+
     function openDialog(title, body){
       const win = document.getElementById('dialogWin');
       document.getElementById('dialogTitle').textContent = title || 'Message';
       document.getElementById('dialogBody').textContent = body || '';
+
+      // ✅ 열 때는 항상 중앙 정렬(드래그했다가도 메시지박스는 다시 중앙)
+      win.style.left = '50%';
+      win.style.top = '50%';
+      win.style.transform = 'translate(-50%,-50%)';
+
       document.getElementById('overlay').style.display = 'block';
       win.style.display = 'block';
       bringToFront(win);
@@ -745,75 +732,8 @@
     }
 
     /* -------------------------
-       ✅ 방명록(로컬 저장)
-    ------------------------- */
-    const GUESTBOOK_KEY = 'jsp275_guestbook_v1';
-
-    function fmtDate(ts){
-      const d = new Date(ts);
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2,'0');
-      const dd = String(d.getDate()).padStart(2,'0');
-      const hh = String(d.getHours()).padStart(2,'0');
-      const mi = String(d.getMinutes()).padStart(2,'0');
-      return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
-    }
-
-    function loadGuestbook(){
-      const raw = localStorage.getItem(GUESTBOOK_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      const log = document.getElementById('guestLog');
-      log.innerHTML = '';
-
-      arr.forEach(entry => {
-        const div = document.createElement('div');
-        const name = entry.name || '익명';
-        div.textContent = `[${fmtDate(entry.ts)}] ${name}: ${entry.text}`;
-        log.appendChild(div);
-      });
-
-      document.getElementById('guestCount').textContent = `${arr.length} entries`;
-      log.scrollTop = log.scrollHeight;
-    }
-
-    function saveGuestbook(arr){
-      localStorage.setItem(GUESTBOOK_KEY, JSON.stringify(arr));
-    }
-
-    function postGuest(){
-      const nameInput = document.getElementById('guestName');
-      const msgInput  = document.getElementById('guestInput');
-
-      let name = (nameInput.value || '').trim();
-      let text = (msgInput.value || '').trim();
-      if(!text) return;
-
-      if(!name) name = '익명';
-      if(name.length > 20) name = name.slice(0,20);
-      if(text.length > 200) text = text.slice(0,200);
-
-      const raw = localStorage.getItem(GUESTBOOK_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      arr.push({ name, text, ts: Date.now() });
-
-      saveGuestbook(arr);
-      msgInput.value = '';
-      loadGuestbook();
-    }
-
-    function clearGuestbook(){
-      localStorage.removeItem(GUESTBOOK_KEY);
-      loadGuestbook();
-    }
-
-    document.getElementById('guestInput').addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter') postGuest();
-    });
-
-    /* -------------------------
        창 열고 닫기
     ------------------------- */
-    let zTop = 80;
     function openWindow(id){
       const w = document.getElementById(id);
       if(!w) return;
@@ -828,17 +748,15 @@
       if(!w) return;
       w.style.display = 'none';
     }
-    function bringToFront(el){
-      zTop += 1;
-      el.style.zIndex = zTop;
-    }
 
     /* -------------------------
        드래그 이동
+       - 모달도 드래그 가능(원하면)
     ------------------------- */
     function makeDraggable(win){
       const bar = win.querySelector('.title-bar');
       if(!bar) return;
+
       let dragging = false, ox = 0, oy = 0;
 
       bar.addEventListener('mousedown', (e)=>{
@@ -847,7 +765,7 @@
 
         const rect = win.getBoundingClientRect();
 
-        // ✅ 모달(센터 transform)인 경우 드래그 시작 시 픽셀 좌표로 고정
+        // ✅ transform 사용 중이면(모달 중앙정렬) 픽셀 좌표로 고정 후 드래그
         if(getComputedStyle(win).transform !== 'none'){
           win.style.transform = 'none';
           win.style.left = rect.left + 'px';
@@ -870,6 +788,7 @@
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
       }
+
       win.addEventListener('mousedown', ()=> bringToFront(win));
     }
 
@@ -978,10 +897,12 @@
       const canvas = document.getElementById('drawCanvas');
       const ctx = canvas.getContext('2d');
       ctx.lineWidth = 2;
+
       function pos(e){
         const r = canvas.getBoundingClientRect();
         return [e.clientX - r.left, e.clientY - r.top];
       }
+
       canvas.addEventListener('mousedown', (e)=>{
         drawing = true;
         [lastX,lastY] = pos(e);
@@ -1007,6 +928,7 @@
 
     /* -------------------------
        뮤직 플레이어
+       ✅ asstes 유지
     ------------------------- */
     const tracks = [
       { title: "Cubes",         src: "/personal-site/asstes/music/cubes.mp3" },
@@ -1070,18 +992,30 @@
     function nextTrack(){
       const wasPlaying = !audio.paused && audio.currentTime > 0;
       loadTrack(currentTrack + 1);
-      if(wasPlaying){ audio.play().catch(()=>{}); btnPlayPause.textContent="Pause"; updateDisplay("PLAY"); }
+      if(wasPlaying){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent="Pause";
+        updateDisplay("PLAY");
+      }
     }
     function prevTrack(){
       const wasPlaying = !audio.paused && audio.currentTime > 0;
       loadTrack(currentTrack - 1);
-      if(wasPlaying){ audio.play().catch(()=>{}); btnPlayPause.textContent="Pause"; updateDisplay("PLAY"); }
+      if(wasPlaying){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent="Pause";
+        updateDisplay("PLAY");
+      }
     }
 
     trackSelect.addEventListener('change', () => {
       const wasPlaying = !audio.paused && audio.currentTime > 0;
       loadTrack(Number(trackSelect.value));
-      if(wasPlaying){ audio.play().catch(()=>{}); btnPlayPause.textContent="Pause"; updateDisplay("PLAY"); }
+      if(wasPlaying){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent="Pause";
+        updateDisplay("PLAY");
+      }
     });
 
     volBar.addEventListener('input', () => {
@@ -1107,9 +1041,42 @@
     audio.addEventListener('ended', () => { nextTrack(); });
 
     /* -------------------------
+       ✅ giscus 로드 (방명록)
+       - 기존 로컬 방명록 코드는 제거됨(에러 원인 제거)
+    ------------------------- */
+    function loadGiscus(){
+      const container = document.getElementById('giscus_container');
+      if(!container) return;
+
+      // 이미 삽입되었으면 중복 삽입 방지
+      if(container.dataset.loaded === '1') return;
+      container.dataset.loaded = '1';
+
+      const s = document.createElement('script');
+      s.src = 'https://giscus.app/client.js';
+      s.setAttribute('data-repo', 'JSP275/personal-site');
+      s.setAttribute('data-repo-id', 'R_kgDOQm0wAw');
+      s.setAttribute('data-category', 'Guestbook');
+      s.setAttribute('data-category-id', 'DIC_kwDOQm0wA84Czuwv');
+      s.setAttribute('data-mapping', 'specific');
+      s.setAttribute('data-term', 'guestbook');
+      s.setAttribute('data-strict', '0');
+      s.setAttribute('data-reactions-enabled', '1');
+      s.setAttribute('data-emit-metadata', '0');
+      s.setAttribute('data-input-position', 'top');
+      s.setAttribute('data-theme', 'light');
+      s.setAttribute('data-lang', 'ko');
+      s.crossOrigin = 'anonymous';
+      s.async = true;
+
+      container.appendChild(s);
+    }
+
+    /* -------------------------
        초기화
     ------------------------- */
     window.addEventListener('load', ()=>{
+      // 배경 복원
       const wp = localStorage.getItem('jsp275_wallpaper');
       if(wp){
         document.getElementById('wallpaperSel').value = wp;
@@ -1125,13 +1092,13 @@
       document.querySelectorAll('.floating').forEach(makeDraggable);
       makeDraggable(document.getElementById('dialogWin'));
 
-      // guestbook init
-      loadGuestbook();
-
       // player init
       trackSelect.innerHTML = tracks.map((t, i) => `<option value="${i}">${t.title}</option>`).join('');
       audio.volume = Number(volBar.value) / 100;
       loadTrack(0);
+
+      // giscus init
+      loadGiscus();
     });
   </script>
 </body>
