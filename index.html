@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JoSePh likes 275</title>
+
+  <!-- 98.css -->
+  <link rel="stylesheet" href="https://unpkg.com/98.css" />
+
+  <style>
+    body{
+      margin:0;
+      min-height:100vh;
+      padding:12px;
+      box-sizing:border-box;
+      background:#008080;
+      overflow:hidden;
+    }
+
+    /* 배경 프리셋 */
+    body.wallpaper-stripes{
+      background:
+        repeating-linear-gradient(45deg, #dcdcdc 0 10px, #c0c0c0 10px 20px),
+        linear-gradient(to bottom, #0067ac, #134a7c);
+    }
+    body.wallpaper-teal{ background:#008080; }
+    body.wallpaper-dark{
+      background: radial-gradient(circle at 30% 20%, #1a2a44, #0a0f1a 70%);
+    }
+
+    /* 메인 셸 창 */
+    #shell{
+      width:min(1240px, 100%);
+      height:calc(100vh - 24px);
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* 셸 내부 그리드 */
+    .shell-body{
+      display:grid;
+      grid-template-columns: 180px 1fr 260px;
+      gap:10px;
+      padding:10px;
+      height:100%;
+      box-sizing:border-box;
+      min-height:0;
+    }
+
+    .panel{ min-height:0; }
+
+    /* 왼쪽 버튼 */
+    .big-btn{
+      width:100%;
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      margin-bottom:8px;
+    }
+
+    /* 가운데 탭 */
+    .center{
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+    .center .tabbar{ margin:0 0 6px 0; }
+    .tabpanel{
+      flex:1;
+      min-height:0;
+      overflow:auto;
+    }
+
+    /* 블로그 탭 2분할 */
+    .blog-split{
+      display:grid;
+      grid-template-columns: 240px 1fr;
+      gap:10px;
+      min-height:300px;
+    }
+    .sunken-panel{ overflow:auto; }
+
+    /* 프로젝트(게임) 탭 2분할 */
+    .game-split{
+      display:grid;
+      grid-template-columns: 240px 1fr;
+      gap:10px;
+      min-height:320px;
+      align-items:start;
+    }
+    #gameCanvas{
+      width:100%;
+      height:auto;
+      border:1px solid #000;
+      background:#000;
+      image-rendering: pixelated;
+      outline:none;
+    }
+    .game-controls{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:8px;
+    }
+    .game-controls button{ min-width:84px; }
+
+    /* 오른쪽 */
+    .right .field-row{
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .right .field-row > button{
+      flex:1 1 30%;
+      min-width:0;
+    }
+
+    /* 상태바 */
+    .status-bar{
+      margin:0 10px 10px 10px;
+    }
+
+    /* 플로팅 창 */
+    .floating{
+      position:absolute;
+      display:none;
+      z-index:50;
+      min-width:260px;
+      max-width:calc(100vw - 24px);
+    }
+    .floating .window-body{ padding:10px; }
+
+    /* 계산기 */
+    .calc-grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:5px;
+      margin-top:8px;
+    }
+    #calcWin .calc-grid button{
+      padding:2px 0;
+      font-size:12px;
+      min-width:0;
+      line-height:1.1;
+    }
+    #calcWin .status-field-border{ font-variant-numeric:tabular-nums; }
+
+    /* 그림판 캔버스 */
+    #drawCanvas{
+      width:100%;
+      height:auto;
+      border:1px solid #000;
+      background:#fff;
+      image-rendering: pixelated;
+    }
+    .palette{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+      margin:8px 0 6px;
+    }
+    .swatch{
+      width:18px;height:18px;
+      border:1px solid #000;
+      padding:0;
+    }
+
+    /* 레트로 장식 */
+    .retro-decor{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+      align-items:center;
+    }
+    .badge{
+      border:1px solid #000;
+      background:#fff;
+      padding:4px 6px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+    }
+    .badge svg{ display:block; }
+    .marquee-wrap{
+      margin-top:10px;
+      border:1px solid #000;
+      background:#fff;
+      padding:4px 6px;
+    }
+
+    /* 뮤직 플레이어 */
+    .player-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:8px;
+    }
+    .player-display{
+      padding:6px 8px;
+      background:#000;
+      color:#00ff66;
+      font-family: "Lucida Console", Monaco, monospace;
+      font-size:12px;
+      border:1px solid #000;
+    }
+    .player-controls{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .player-controls button{ min-width:64px; }
+    .player-sliders{
+      display:grid;
+      grid-template-columns: 64px 1fr;
+      gap:6px;
+      align-items:center;
+    }
+    input[type="range"]{ width:100%; }
+
+    /*  98 스타일 “메시지 박스” 모달 */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.15);
+      display:none;
+      z-index:9000;
+    }
+    .modal{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      display:none;
+      z-index:9001;
+      width:min(420px, calc(100vw - 24px));
+    }
+    .modal .window-body{ padding:10px; }
+    .modal .msg-row{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .modal .msg-icon{
+      width:32px;
+      height:32px;
+      flex:0 0 auto;
+      border:1px solid #000;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+    }
+    .modal .msg-text{
+      flex:1;
+      line-height:1.4;
+      word-break:break-word;
+      white-space:pre-wrap;
+    }
+
+    /* -------------------------
+       Live Visitors (Presence)
+    ------------------------- */
+    .presence-grid{
+      display:grid;
+      grid-template-columns: 1fr 280px;
+      gap:10px;
+      align-items:start;
+    }
+    .presence-led{
+      border:1px solid #000;
+      background:#000;
+      color:#00ff66;
+      padding:8px;
+      font-family:"Lucida Console", Monaco, monospace;
+      box-shadow: inset 1px 1px 0 rgba(255,255,255,0.12), inset -1px -1px 0 rgba(0,0,0,0.6);
+    }
+    .presence-led-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:6px;
+    }
+    .presence-label{
+      font-size:12px;
+      letter-spacing:1px;
+      opacity:0.95;
+    }
+    .presence-pulse{
+      width:10px;
+      height:10px;
+      border:1px solid #003b16;
+      background:#001a0a;
+      box-shadow:none;
+    }
+    .presence-pulse.on{
+      background:#00ff66;
+      box-shadow:0 0 10px rgba(0,255,102,0.65);
+    }
+    .presence-num{
+      font-size:34px;
+      line-height:1.1;
+      letter-spacing:2px;
+      padding:4px 6px;
+      border:1px solid #003b16;
+      background:linear-gradient(#000, #020);
+      user-select:none;
+    }
+    .presence-sub{
+      margin-top:6px;
+      font-size:12px;
+      opacity:0.9;
+      display:flex;
+      gap:6px;
+    }
+    .presence-meter{ margin-top:8px; }
+    .presence-meter-frame{
+      border:1px solid #000;
+      background:#fff;
+      height:12px;
+      box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+      overflow:hidden;
+    }
+    .presence-meter-bar{
+      height:100%;
+      width:0%;
+      background: repeating-linear-gradient(
+        90deg,
+        #00ff66 0 8px,
+        #00aa44 8px 16px
+      );
+      transition: width 140ms linear;
+    }
+    .presence-meter-hint{
+      margin-top:4px;
+      font-size:11px;
+      color:#000;
+      opacity:0.65;
+    }
+
+    @media (max-width: 980px){
+      body{ overflow:auto; }
+      #shell{ height:auto; }
+      .shell-body{ grid-template-columns: 1fr; }
+      .blog-split{ grid-template-columns: 1fr; }
+      .game-split{ grid-template-columns: 1fr; }
+      .right .field-row > button{ flex:1 1 32%; }
+      .presence-grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="wallpaper-stripes">
+  <div class="window" id="shell">
+    <div class="title-bar">
+      <div class="title-bar-text">JSP275 Desktop</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" title="Minimize"></button>
+        <button aria-label="Maximize" title="Maximize"></button>
+        <button aria-label="Close" title="Close" onclick="alert('윈도우 창이 쓰러지지 않아')"></button>
+      </div>
+    </div>
+
+    <div class="window-body shell-body">
+      <!-- LEFT -->
+      <div class="panel left">
+        <button class="big-btn" onclick="openWindow('drawWin')">그림판</button>
+        <button class="big-btn" onclick="openWindow('settingsWin')">설정 메뉴</button>
+
+        <fieldset>
+          <legend>바로가기</legend>
+          <div class="field-row-stacked">
+            <button onclick="openWindow('notepadWin')">메모장</button>
+            <button onclick="openWindow('todoWin')">할 일 목록</button>
+            <button onclick="openWindow('calcWin')">계산기</button>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>링크</legend>
+          <ul class="tree-view">
+            <li><a href="https://itch.io" target="_blank" rel="noreferrer">Itch.io</a></li>
+            <li><a href="https://youtu.be/dQw4w9WgXcQ" target="_blank" rel="noreferrer">YouTube</a></li>
+          </ul>
+        </fieldset>
+      </div>
+
+      <!-- CENTER -->
+      <div class="panel center">
+        <menu role="tablist" class="tabbar" id="tabs">
+          <li role="tab" aria-selected="true"><a href="#tab-main" data-tab="main">메인로그</a></li>
+          <li role="tab"><a href="#tab-blog" data-tab="blog">블로그</a></li>
+          <li role="tab"><a href="#tab-project" data-tab="project">프로젝트</a></li>
+        </menu>
+
+        <div class="window tabpanel" role="tabpanel">
+          <div class="window-body">
+            <!-- MAIN -->
+            <section id="tab-main" class="tab-page">
+              <h3 style="margin:0 0 6px 0;">JSP275의 메인로그</h3>
+
+              <div class="field-border" style="padding:10px;">
+                <p style="margin:0;">
+                  안녕하세요, 사이트에 온걸 환영합니다. 한번 둘러보시죠 :)
+                </p>
+
+                <div class="retro-decor">
+                  <div class="badge" title="Under Construction">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                      <rect width="18" height="18" fill="#ffd800"/>
+                      <path d="M-2 4 L4 -2 M2 18 L18 2 M10 18 L18 10" stroke="#000" stroke-width="3"/>
+                    </svg>
+                    <span><b>UNDER CONSTRUCTION</b></span>
+                  </div>
+
+                  <div class="badge" title="Best viewed">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                      <rect width="18" height="18" fill="#000080"/>
+                      <rect x="3" y="4" width="12" height="8" fill="#c0c0c0" stroke="#fff" stroke-width="1"/>
+                      <rect x="6" y="13" width="6" height="2" fill="#808080"/>
+                    </svg>
+                    <span>Best viewed in 800×600</span>
+                  </div>
+
+                  <div class="badge" title="98.css vibe">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                      <rect width="18" height="18" fill="#c0c0c0"/>
+                      <rect x="3" y="3" width="12" height="12" fill="#fff" stroke="#000" stroke-width="1"/>
+                      <path d="M5 9h8" stroke="#000" stroke-width="2"/>
+                    </svg>
+                    <span>98.css</span>
+                  </div>
+                </div>
+
+                <div class="marquee-wrap">
+                  <marquee behavior="scroll" direction="left" scrollamount="4">
+                    JSP275 Desktop - 기록, 개발, 그리고 작은 실험들…
+                  </marquee>
+                </div>
+              </div>
+
+              <!-- Now Playing -->
+              <div class="window" style="margin-top:10px;">
+                <div class="title-bar">
+                  <div class="title-bar-text">Now Playing</div>
+                  <div class="title-bar-controls">
+                    <button aria-label="Help" title="Help" onclick="openDialog(
+                      'Now Playing 도움말',
+                      '이 플레이어는 사이트에 올려둔 음악을 재생합니다.\n\n- Track: 곡 선택\n- Seek: 재생 위치 이동\n- Volume: 볼륨 조절\n\n※ 모든 곡은 제가 직접 만든 자작곡 이랍니다.'
+                    )"></button>
+                  </div>
+                </div>
+                <div class="window-body player-grid">
+                  <div class="player-display" id="playerDisplay">
+                    STOP · --:-- / --:-- · (no track)
+                  </div>
+
+                  <div class="field-row-stacked">
+                    <label for="trackSelect">Track</label>
+                    <select id="trackSelect"></select>
+                  </div>
+
+                  <div class="player-controls">
+                    <button class="default" id="btnPlayPause" onclick="togglePlay()">Play</button>
+                    <button id="btnStop" onclick="stopAudio()">Stop</button>
+                    <button onclick="prevTrack()">Prev</button>
+                    <button onclick="nextTrack()">Next</button>
+                  </div>
+
+                  <div class="player-sliders">
+                    <label for="seekBar">Seek</label>
+                    <input id="seekBar" type="range" min="0" max="1000" value="0" />
+                    <label for="volBar">Volume</label>
+                    <input id="volBar" type="range" min="0" max="100" value="60" />
+                  </div>
+
+                  <audio id="audio" preload="metadata"></audio>
+                </div>
+              </div>
+
+              <!-- Live Visitors (ONLINE) -->
+              <div class="window" style="margin-top:10px;">
+                <div class="title-bar">
+                  <div class="title-bar-text">Live Visitors</div>
+                  <div class="title-bar-controls">
+                    <button aria-label="Help" title="Help" onclick="openDialog(
+                      'Live Visitors 도움말',
+                      '지금 이 페이지를 보고 있는 온라인 유저 수를 표시합니다.'
+                    )"></button>
+                  </div>
+                </div>
+
+                <div class="window-body presence-grid">
+                  <div>
+                    <div class="presence-led">
+                      <div class="presence-led-top">
+                        <span class="presence-label">ONLINE</span>
+                        <span class="presence-pulse" id="onlinePulse" aria-hidden="true"></span>
+                      </div>
+                      <div class="presence-num" id="onlineCount">---</div>
+                      <div class="presence-sub">
+                        <span>ME:</span> <span id="myConn">-</span>
+                      </div>
+                    </div>
+
+                    <div class="presence-meter">
+                      <div class="presence-meter-frame">
+                        <div class="presence-meter-bar" id="onlineBar"></div>
+                      </div>
+                      <div class="presence-meter-hint">meter scale: 0 → 25+</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <fieldset style="margin:0;">
+                      <legend>최근 변화</legend>
+                      <div class="sunken-panel" style="height:112px; padding:8px;">
+                        <ul class="tree-view" id="onlineList" style="margin:0;"></ul>
+                      </div>
+                    </fieldset>
+                    <p style="margin:6px 0 0 0; font-size:12px;">
+                      ※ 새로고침/탭 이동에 따라 순간적으로 출렁일 수 있어요.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- BLOG -->
+            <section id="tab-blog" class="tab-page" style="display:none;">
+              <div class="blog-split">
+                <div>
+                  <fieldset>
+                    <legend>글 목록</legend>
+                    <ul class="tree-view" id="postList"></ul>
+                  </fieldset>
+                </div>
+                <div>
+                  <fieldset>
+                    <legend id="postTitle">선택한 글</legend>
+                    <div class="sunken-panel" style="height:260px; padding:10px;">
+                      <div id="postBody" style="white-space:pre-wrap;"></div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+            </section>
+
+            <!-- PROJECT -->
+            <section id="tab-project" class="tab-page" style="display:none;">
+              <fieldset>
+                <legend>프로젝트</legend>
+
+                <div class="field-row-stacked">
+                  <div class="field-border" style="padding:10px; margin-bottom:8px;">
+                    <strong>게임</strong><br/>
+                    - 아래 목록에서 선택하면 실행됩니다.<br/>
+                    - 팁) <b>화면을 클릭하세요</b>
+                  </div>
+
+                  <div class="game-split">
+                    <div>
+                      <fieldset>
+                        <legend>게임 목록</legend>
+                        <ul class="tree-view" id="gameList"></ul>
+                      </fieldset>
+
+                      <fieldset style="margin-top:10px;">
+                        <legend id="gameTitle">선택한 게임</legend>
+                        <div class="sunken-panel" style="height:150px; padding:10px;">
+                          <div id="gameDesc" style="white-space:pre-wrap;"></div>
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div>
+                      <div class="window">
+                        <div class="title-bar">
+                          <div class="title-bar-text" id="gameWinTitle">게임 실행기</div>
+                          <div class="title-bar-controls">
+                            <button aria-label="Help" title="Help" onclick="openDialog(
+                              '게임 도움말',
+                              '조작은 게임 설명에 적혀있습니다.\n\n- 키 입력이 안 먹으면: 게임 화면을 클릭하세요.\n- R 키로 리셋할 수 있어요.'
+                            )"></button>
+                          </div>
+                        </div>
+                        <div class="window-body">
+                          <div class="sunken-panel" style="padding:8px;">
+                            <canvas id="gameCanvas" width="560" height="320" tabindex="0" aria-label="Game Screen"></canvas>
+                          </div>
+
+                          <div class="game-controls">
+                            <button class="default" onclick="gameReset()">Reset (R)</button>
+                            <button id="btnGamePause" onclick="gameTogglePause()">Pause</button>
+                          </div>
+
+                          <div class="status-field-border" style="padding:6px; margin-top:8px;">
+                            <span id="gameStatus">STOP · (no game)</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field-border" style="padding:10px; margin-top:10px;">
+                    <strong>블로그</strong><br/>
+                    - 제작 일지 / 공부 기록 / 링크 모음
+                  </div>
+                </div>
+              </fieldset>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="panel right">
+        <fieldset>
+          <legend>컴퓨터와 승부</legend>
+          <p style="margin-top:0;">가위·바위·보</p>
+
+          <div class="field-row">
+            <button onclick="playRPS('가위')">가위</button>
+            <button onclick="playRPS('바위')">바위</button>
+            <button onclick="playRPS('보')">보</button>
+          </div>
+
+          <div class="status-field-border" style="padding:6px; margin-top:6px;">
+            <span id="rpsResult">결과가 여기에 표시됩니다.</span>
+          </div>
+        </fieldset>
+
+        <!--  방명록: giscus -->
+        <fieldset>
+          <legend>방명록</legend>
+          <div class="sunken-panel" style="height:220px; padding:6px; background:#fff; overflow:auto;">
+            <div id="giscus_container"></div>
+          </div>
+          <p style="margin:6px 0 0 0; font-size:12px;">
+            와 글써야지
+          </p>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <p class="status-bar-field" style="flex:1;">이 사이트는 여전히 만들어지는 중 입니다</p>
+      <p class="status-bar-field" style="width:110px;">JSP275</p>
+      <p class="status-bar-field" id="clock" style="width:120px; text-align:right;">--:--:--</p>
+    </div>
+  </div>
+
+  <!--  98 스타일 메시지 박스(모달) -->
+  <div class="overlay" id="overlay" onclick="closeDialog()"></div>
+  <div class="window modal" id="dialogWin" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <div class="title-bar">
+      <div class="title-bar-text" id="dialogTitle">Message</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeDialog()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="msg-row">
+        <div class="msg-icon">i</div>
+        <div class="msg-text" id="dialogBody">내용</div>
+      </div>
+      <div class="field-row" style="justify-content:flex-end; margin-top:10px;">
+        <button class="default" onclick="closeDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 그림판 -->
+  <div class="window floating" id="drawWin" style="left:80px; top:90px; width:420px;">
+    <div class="title-bar">
+      <div class="title-bar-text">그림판</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('drawWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="sunken-panel" style="padding:8px;">
+        <canvas id="drawCanvas" width="360" height="220"></canvas>
+      </div>
+
+      <div class="palette">
+        <button class="swatch" style="background:#000" onclick="setDrawColor('#000000')" aria-label="Black"></button>
+        <button class="swatch" style="background:#f00" onclick="setDrawColor('#ff0000')" aria-label="Red"></button>
+        <button class="swatch" style="background:#0f0" onclick="setDrawColor('#00ff00')" aria-label="Green"></button>
+        <button class="swatch" style="background:#00f" onclick="setDrawColor('#0000ff')" aria-label="Blue"></button>
+        <button class="swatch" style="background:#ff0" onclick="setDrawColor('#ffff00')" aria-label="Yellow"></button>
+        <button class="swatch" style="background:#f0f" onclick="setDrawColor('#ff00ff')" aria-label="Magenta"></button>
+        <button class="swatch" style="background:#0ff" onclick="setDrawColor('#00ffff')" aria-label="Cyan"></button>
+        <button class="swatch" style="background:#ffa500" onclick="setDrawColor('#ffa500')" aria-label="Orange"></button>
+      </div>
+
+      <div class="field-row">
+        <button onclick="clearCanvas()">지우기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 설정 -->
+  <div class="window floating" id="settingsWin" style="left:520px; top:110px; width:360px;">
+    <div class="title-bar">
+      <div class="title-bar-text">설정</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('settingsWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <fieldset>
+        <legend>배경</legend>
+        <div class="field-row-stacked" style="max-width: 100%;">
+          <label for="wallpaperSel">Wallpaper</label>
+          <select id="wallpaperSel" onchange="applyWallpaper(this.value)">
+            <option value="wallpaper-stripes">Stripes + Gradient</option>
+            <option value="wallpaper-teal">Classic Teal</option>
+            <option value="wallpaper-dark">Dark Mood</option>
+          </select>
+        </div>
+      </fieldset>
+      <div class="field-row" style="margin-top:10px; justify-content:flex-end;">
+        <button class="default" onclick="closeWindow('settingsWin')">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메모장 -->
+  <div class="window floating" id="notepadWin" style="left:140px; top:360px; width:420px;">
+    <div class="title-bar">
+      <div class="title-bar-text">메모장</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('notepadWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="field-row-stacked">
+        <label for="noteArea">메모</label>
+        <textarea id="noteArea" rows="8" placeholder="여기에 메모..."></textarea>
+      </div>
+      <div class="field-row" style="justify-content:flex-end;">
+        <button onclick="saveNote()">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 할 일 목록 -->
+  <div class="window floating" id="todoWin" style="left:590px; top:360px; width:420px;">
+    <div class="title-bar">
+      <div class="title-bar-text">할 일 목록</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('todoWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="field-row-stacked">
+        <label for="todoInput">할 일</label>
+        <input id="todoInput" type="text" placeholder="할 일을 입력..." />
+      </div>
+      <div class="field-row">
+        <button onclick="addTodo()">추가</button>
+        <button onclick="clearTodos()">전체삭제</button>
+      </div>
+      <div class="sunken-panel" style="height:160px; padding:8px;">
+        <ul class="tree-view" id="todoList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 계산기 -->
+  <div class="window floating" id="calcWin" style="left:980px; top:110px; width:280px;">
+    <div class="title-bar">
+      <div class="title-bar-text">계산기</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('calcWin')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="status-field-border" style="padding:8px; text-align:right;" id="calcDisplay">0</div>
+
+      <div class="calc-grid">
+        <button onclick="pressKey('7')">7</button>
+        <button onclick="pressKey('8')">8</button>
+        <button onclick="pressKey('9')">9</button>
+        <button onclick="pressKey('/')">÷</button>
+
+        <button onclick="pressKey('4')">4</button>
+        <button onclick="pressKey('5')">5</button>
+        <button onclick="pressKey('6')">6</button>
+        <button onclick="pressKey('*')">×</button>
+
+        <button onclick="pressKey('1')">1</button>
+        <button onclick="pressKey('2')">2</button>
+        <button onclick="pressKey('3')">3</button>
+        <button onclick="pressKey('-')">−</button>
+
+        <button onclick="pressKey('0')">0</button>
+        <button onclick="pressKey('.')">.</button>
+        <button class="default" onclick="calculate()">=</button>
+        <button onclick="pressKey('+')">＋</button>
+      </div>
+
+      <div class="field-row" style="justify-content:flex-end; margin-top:8px;">
+        <button onclick="clearCalc()">초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase (Realtime Database Presence) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.3.0/firebase-app-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.3.0/firebase-auth-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.3.0/firebase-database-compat.min.js"></script>
+
+  <script>
+    /* -------------------------
+       탭
+    ------------------------- */
+    const tabLinks = document.querySelectorAll('#tabs a[data-tab]');
+    const tabPages = document.querySelectorAll('.tab-page');
+    tabLinks.forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('#tabs li[role="tab"]').forEach(li => li.setAttribute('aria-selected', 'false'));
+        a.closest('li').setAttribute('aria-selected', 'true');
+        tabPages.forEach(p => p.style.display = 'none');
+        document.getElementById('tab-' + a.dataset.tab).style.display = 'block';
+      });
+    });
+
+    /* -------------------------
+       시계
+    ------------------------- */
+    function updateClock(){
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      const ss = String(now.getSeconds()).padStart(2,'0');
+      document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`;
+    }
+    setInterval(updateClock, 500);
+    updateClock();
+
+    /* -------------------------
+       ✅ 98 UI 메시지 박스(모달)
+    ------------------------- */
+    let zTop = 80;
+
+    function bringToFront(el){
+      if(!el) return;
+
+      if(el.classList.contains('modal')){
+        el.style.zIndex = 9001;
+        return;
+      }
+
+      zTop += 1;
+      el.style.zIndex = zTop;
+    }
+
+    function openDialog(title, body){
+      const win = document.getElementById('dialogWin');
+      document.getElementById('dialogTitle').textContent = title || 'Message';
+      document.getElementById('dialogBody').textContent = body || '';
+
+      win.style.left = '50%';
+      win.style.top = '50%';
+      win.style.transform = 'translate(-50%,-50%)';
+
+      document.getElementById('overlay').style.display = 'block';
+      win.style.display = 'block';
+      bringToFront(win);
+    }
+    function closeDialog(){
+      document.getElementById('overlay').style.display = 'none';
+      const win = document.getElementById('dialogWin');
+      win.style.display = 'none';
+    }
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        const win = document.getElementById('dialogWin');
+        if(win && win.style.display === 'block') closeDialog();
+      }
+    });
+
+    /* -------------------------
+       블로그
+    ------------------------- */
+    const posts = [
+      {title:'첫 번째 글', content:'행복은 습관이다. 그것을 몸에 지니라. - 엘버트 허버드'},
+      {title:'두 번째 글', content:'모든 위대한 것들은 작은 시작에서 비롯된다. - 플라톤'},
+      {title:'세 번째 글', content:'우리는 변화를 두려워하지 말아야 한다. - 톨스토이'},
+      {title:'네 번째 글', content:'지식은 힘이다. - 프랜시스 베이컨'},
+      {title:'다섯 번째 글', content:'길을 잃는다는 것은 곧 새로운 길을 찾는 것이다. - 톨스토이'},
+    ];
+    function renderPostList(){
+      const ul = document.getElementById('postList');
+      ul.innerHTML = '';
+      posts.forEach((p, idx) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = p.title;
+        a.onclick = (e) => { e.preventDefault(); openPost(idx); };
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      openPost(0);
+    }
+    function openPost(index){
+      const p = posts[index];
+      if(!p) return;
+      document.getElementById('postTitle').textContent = p.title;
+      document.getElementById('postBody').textContent = p.content;
+    }
+
+    /* -------------------------
+       게임: 가위바위보
+    ------------------------- */
+    function playRPS(choice){
+      const choices = ['가위','바위','보'];
+      const comp = choices[Math.floor(Math.random()*3)];
+      let result;
+      if(choice === comp) result = `비겼어요! 컴퓨터도 ${comp}.`;
+      else if((choice==='가위' && comp==='보') || (choice==='바위' && comp==='가위') || (choice==='보' && comp==='바위'))
+        result = `이겼어요! 컴퓨터는 ${comp}.`;
+      else result = `졌어요! 컴퓨터는 ${comp}.`;
+      document.getElementById('rpsResult').textContent = result;
+    }
+
+    /* -------------------------
+       창 열고 닫기
+    ------------------------- */
+    function openWindow(id){
+      const w = document.getElementById(id);
+      if(!w) return;
+      w.style.display = 'block';
+      bringToFront(w);
+      if(id === 'notepadWin') loadNote();
+      if(id === 'todoWin') loadTodos();
+      if(id === 'calcWin') refreshCalc();
+    }
+    function closeWindow(id){
+      const w = document.getElementById(id);
+      if(!w) return;
+      w.style.display = 'none';
+    }
+
+    /* -------------------------
+       드래그 이동
+    ------------------------- */
+    function makeDraggable(win){
+      const bar = win.querySelector('.title-bar');
+      if(!bar) return;
+
+      let dragging = false, ox = 0, oy = 0;
+
+      bar.addEventListener('mousedown', (e)=>{
+        dragging = true;
+        bringToFront(win);
+
+        const rect = win.getBoundingClientRect();
+
+        if(getComputedStyle(win).transform !== 'none'){
+          win.style.transform = 'none';
+          win.style.left = rect.left + 'px';
+          win.style.top  = rect.top  + 'px';
+        }
+
+        ox = e.clientX - rect.left;
+        oy = e.clientY - rect.top;
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+
+      function onMove(e){
+        if(!dragging) return;
+        win.style.left = (e.clientX - ox) + 'px';
+        win.style.top  = (e.clientY - oy) + 'px';
+      }
+      function onUp(){
+        dragging = false;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+
+      win.addEventListener('mousedown', ()=> bringToFront(win));
+    }
+
+    /* -------------------------
+       설정: 배경
+    ------------------------- */
+    function applyWallpaper(cls){
+      document.body.classList.remove('wallpaper-stripes','wallpaper-teal','wallpaper-dark');
+      document.body.classList.add(cls);
+      localStorage.setItem('jsp275_wallpaper', cls);
+    }
+
+    /* -------------------------
+       메모장(로컬 저장)
+    ------------------------- */
+    const NOTE_KEY = 'jsp275_note';
+    function saveNote(){
+      localStorage.setItem(NOTE_KEY, document.getElementById('noteArea').value || '');
+    }
+    function loadNote(){
+      document.getElementById('noteArea').value = localStorage.getItem(NOTE_KEY) || '';
+    }
+
+    /* -------------------------
+       할일(로컬 저장)
+    ------------------------- */
+    const TODO_KEY = 'jsp275_todos';
+    function addTodo(){
+      const input = document.getElementById('todoInput');
+      const text = input.value.trim();
+      if(!text) return;
+      const arr = JSON.parse(localStorage.getItem(TODO_KEY) || '[]');
+      arr.push(text);
+      localStorage.setItem(TODO_KEY, JSON.stringify(arr));
+      input.value = '';
+      loadTodos();
+    }
+    function loadTodos(){
+      const arr = JSON.parse(localStorage.getItem(TODO_KEY) || '[]');
+      const ul = document.getElementById('todoList');
+      ul.innerHTML = '';
+      arr.forEach((t, i)=>{
+        const li = document.createElement('li');
+        li.textContent = t + ' ';
+        const del = document.createElement('button');
+        del.textContent = '삭제';
+        del.onclick = ()=>{
+          const next = JSON.parse(localStorage.getItem(TODO_KEY) || '[]');
+          next.splice(i,1);
+          localStorage.setItem(TODO_KEY, JSON.stringify(next));
+          loadTodos();
+        };
+        li.appendChild(del);
+        ul.appendChild(li);
+      });
+    }
+    function clearTodos(){
+      localStorage.removeItem(TODO_KEY);
+      loadTodos();
+    }
+
+    /* -------------------------
+       계산기
+    ------------------------- */
+    let calcBuffer = '';
+    function refreshCalc(){
+      document.getElementById('calcDisplay').textContent = calcBuffer || '0';
+    }
+    function pressKey(k){
+      const allowed = /^[0-9+\-*/().]$/;
+      if(!allowed.test(k)) return;
+      calcBuffer += k;
+      refreshCalc();
+    }
+    function safeEval(expr){
+      if(!/^[0-9+\-*/().\s]+$/.test(expr)) throw new Error('bad');
+      const compact = expr.replace(/\s+/g,'');
+      if(/(\*\*|\/\/)/.test(compact)) throw new Error('bad');
+      const v = Function('return (' + expr + ')')();
+      if(!Number.isFinite(v)) throw new Error('bad');
+      return v;
+    }
+    function calculate(){
+      try{
+        const v = safeEval(calcBuffer);
+        calcBuffer = String(v);
+        refreshCalc();
+      }catch(e){
+        calcBuffer = '';
+        document.getElementById('calcDisplay').textContent = '오류';
+      }
+    }
+    function clearCalc(){
+      calcBuffer = '';
+      refreshCalc();
+    }
+
+    /* -------------------------
+       그림판
+    ------------------------- */
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+    let drawColor = '#000000';
+    function setDrawColor(c){ drawColor = c; }
+    function initCanvas(){
+      const canvas = document.getElementById('drawCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.lineWidth = 2;
+
+      function pos(e){
+        const r = canvas.getBoundingClientRect();
+        return [e.clientX - r.left, e.clientY - r.top];
+      }
+
+      canvas.addEventListener('mousedown', (e)=>{
+        drawing = true;
+        [lastX,lastY] = pos(e);
+      });
+      canvas.addEventListener('mousemove', (e)=>{
+        if(!drawing) return;
+        const [x,y] = pos(e);
+        ctx.strokeStyle = drawColor;
+        ctx.beginPath();
+        ctx.moveTo(lastX,lastY);
+        ctx.lineTo(x,y);
+        ctx.stroke();
+        [lastX,lastY] = [x,y];
+      });
+      canvas.addEventListener('mouseup', ()=> drawing=false);
+      canvas.addEventListener('mouseleave', ()=> drawing=false);
+    }
+    function clearCanvas(){
+      const canvas = document.getElementById('drawCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+
+    /* -------------------------
+       뮤직 플레이어
+    ------------------------- */
+    const tracks = [
+      { title: "Cubes",         src: "/personal-site/asstes/music/cubes.mp3" },
+      { title: "JSP275's Bar",  src: "/personal-site/asstes/music/jsp275_bar.mp3" },
+      { title: "Nejunsinsante", src: "/personal-site/asstes/music/nejunsinsante.wav" },
+    ];
+
+    const audio = document.getElementById('audio');
+    const trackSelect = document.getElementById('trackSelect');
+    const playerDisplay = document.getElementById('playerDisplay');
+    const seekBar = document.getElementById('seekBar');
+    const volBar = document.getElementById('volBar');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+
+    let currentTrack = 0;
+    let seeking = false;
+
+    function fmt(t){
+      if(!Number.isFinite(t)) return "--:--";
+      const m = Math.floor(t/60);
+      const s = Math.floor(t%60);
+      return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    }
+    function updateDisplay(stateText){
+      const cur = fmt(audio.currentTime);
+      const dur = fmt(audio.duration);
+      const name = tracks[currentTrack]?.title ?? "(no track)";
+      playerDisplay.textContent = `${stateText} · ${cur} / ${dur} · ${name}`;
+    }
+
+    function loadTrack(i){
+      currentTrack = (i + tracks.length) % tracks.length;
+      trackSelect.value = String(currentTrack);
+      audio.src = tracks[currentTrack].src;
+      audio.load();
+      updateDisplay("STOP");
+      btnPlayPause.textContent = "Play";
+      seekBar.value = "0";
+    }
+
+    function togglePlay(){
+      if(!audio.src) loadTrack(0);
+      if(audio.paused){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent = "Pause";
+        updateDisplay("PLAY");
+      }else{
+        audio.pause();
+        btnPlayPause.textContent = "Play";
+        updateDisplay("PAUSE");
+      }
+    }
+
+    function stopAudio(){
+      audio.pause();
+      audio.currentTime = 0;
+      btnPlayPause.textContent = "Play";
+      updateDisplay("STOP");
+    }
+
+    function nextTrack(){
+      const wasPlaying = !audio.paused && audio.currentTime > 0;
+      loadTrack(currentTrack + 1);
+      if(wasPlaying){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent="Pause";
+        updateDisplay("PLAY");
+      }
+    }
+    function prevTrack(){
+      const wasPlaying = !audio.paused && audio.currentTime > 0;
+      loadTrack(currentTrack - 1);
+      if(wasPlaying){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent="Pause";
+        updateDisplay("PLAY");
+      }
+    }
+
+    trackSelect.addEventListener('change', () => {
+      const wasPlaying = !audio.paused && audio.currentTime > 0;
+      loadTrack(Number(trackSelect.value));
+      if(wasPlaying){
+        audio.play().catch(()=>{});
+        btnPlayPause.textContent="Pause";
+        updateDisplay("PLAY");
+      }
+    });
+
+    volBar.addEventListener('input', () => {
+      audio.volume = Number(volBar.value) / 100;
+    });
+
+    seekBar.addEventListener('input', () => { seeking = true; });
+    seekBar.addEventListener('change', () => {
+      if(Number.isFinite(audio.duration)){
+        audio.currentTime = (Number(seekBar.value)/1000) * audio.duration;
+      }
+      seeking = false;
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if(!seeking && Number.isFinite(audio.duration)){
+        const v = (audio.currentTime / audio.duration) * 1000;
+        seekBar.value = String(Math.max(0, Math.min(1000, Math.floor(v))));
+      }
+      if(!audio.paused) updateDisplay("PLAY");
+    });
+    audio.addEventListener('loadedmetadata', () => updateDisplay(audio.paused ? "STOP" : "PLAY"));
+    audio.addEventListener('ended', () => { nextTrack(); });
+
+    /* -------------------------
+        giscus 로드 (방명록)
+    ------------------------- */
+    function loadGiscus(){
+      const container = document.getElementById('giscus_container');
+      if(!container) return;
+
+      if(container.dataset.loaded === '1') return;
+      container.dataset.loaded = '1';
+
+      const s = document.createElement('script');
+      s.src = 'https://giscus.app/client.js';
+      s.setAttribute('data-repo', 'JSP275/personal-site');
+      s.setAttribute('data-repo-id', 'R_kgDOQm0wAw');
+      s.setAttribute('data-category', 'Guestbook');
+      s.setAttribute('data-category-id', 'DIC_kwDOQm0wA84Czuwv');
+      s.setAttribute('data-mapping', 'specific');
+      s.setAttribute('data-term', 'guestbook');
+      s.setAttribute('data-strict', '0');
+      s.setAttribute('data-reactions-enabled', '1');
+      s.setAttribute('data-emit-metadata', '0');
+      s.setAttribute('data-input-position', 'top');
+      s.setAttribute('data-theme', 'light');
+      s.setAttribute('data-lang', 'ko');
+      s.crossOrigin = 'anonymous';
+      s.async = true;
+
+      container.appendChild(s);
+    }
+
+    /* -------------------------
+       Firebase Presence (온라인 접속자)
+    ------------------------- */
+    function initOnlineCounter(){
+      const countEl = document.getElementById('onlineCount');
+      const pulseEl = document.getElementById('onlinePulse');
+      const barEl   = document.getElementById('onlineBar');
+      const listEl  = document.getElementById('onlineList');
+      const myEl    = document.getElementById('myConn');
+
+      function setCount(n){
+        if(countEl) countEl.textContent = String(n).padStart(3,'0');
+        if(pulseEl){
+          pulseEl.classList.add('on');
+          setTimeout(()=>pulseEl.classList.remove('on'), 120);
+        }
+        if(barEl){
+          const pct = Math.max(0, Math.min(100, (n/25)*100));
+          barEl.style.width = pct + '%';
+        }
+      }
+
+      function setError(msg){
+        if(countEl) countEl.textContent = "ERR";
+        if(listEl){
+          listEl.innerHTML = `<li>${msg}</li>`;
+        }
+      }
+
+      if(typeof firebase === 'undefined'){
+        setError("Firebase 스크립트가 로드되지 않았어요.");
+        return;
+      }
+
+      // Firebase 설정
+      const firebaseConfig = {
+        apiKey: "AIzaSyAQZjhIiQJ7L2ROk0FcvNGCVsGm6QYKbWc",
+        authDomain: "personhowmany.firebaseapp.com",
+        databaseURL: "https://personhowmany-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "personhowmany",
+        storageBucket: "personhowmany.firebasestorage.app",
+        messagingSenderId: "62168112894",
+        appId: "1:62168112894:web:a71c2b2d84f87c645c4faf"
+      };
+
+      if(!firebaseConfig.apiKey || firebaseConfig.apiKey === "PASTE_ME"){
+        setError("firebaseConfig를 먼저 채워주세요.");
+        return;
+      }
+
+      try{
+        if(!firebase.apps || firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
+      }catch(e){
+        // 이미 초기화된 경우 무시
+      }
+
+      const auth = firebase.auth();
+      const db   = firebase.database();
+
+      auth.signInAnonymously().catch((err)=>{
+        setError("익명 로그인 실패: " + (err?.message || err));
+      });
+
+      auth.onAuthStateChanged((user)=>{
+        if(!user) return;
+
+        const uid = user.uid;
+        if(myEl) myEl.textContent = uid.slice(0,6) + "…";
+
+        const statusRef    = db.ref("status/" + uid);
+        const connectedRef = db.ref(".info/connected");
+
+        const onlineState  = { state: "online",  last_changed: firebase.database.ServerValue.TIMESTAMP };
+        const offlineState = { state: "offline", last_changed: firebase.database.ServerValue.TIMESTAMP };
+
+        connectedRef.on("value", (snap)=>{
+          if(snap.val() === false) return;
+
+          statusRef.onDisconnect().set(offlineState);
+          statusRef.set(onlineState);
+        });
+
+        db.ref("status")
+          .orderByChild("state")
+          .equalTo("online")
+          .on("value", (snap)=>{
+            setCount(snap.numChildren());
+          });
+
+        db.ref("status")
+          .orderByChild("last_changed")
+          .limitToLast(5)
+          .on("value", (snap)=>{
+            if(!listEl) return;
+
+            const arr = [];
+            snap.forEach(ch=>{
+              const v = ch.val() || {};
+              arr.push({ uid: ch.key, state: v.state, t: v.last_changed || 0 });
+            });
+            arr.sort((a,b)=> (b.t - a.t));
+
+            listEl.innerHTML = arr.map(it=>{
+              const u = (it.uid || "").slice(0,6) + "…";
+              const s = it.state || "?";
+              return `<li>${u} : ${s}</li>`;
+            }).join("") || "<li>(none)</li>";
+          });
+      });
+    }
+
+    /* -------------------------
+       미니게임들
+       - 문구: "화면을 클릭하세요"
+       - 플랫포머
+       - 스페이스 인베이더스
+    ------------------------- */
+    const games = [
+      {
+        id: "plat98",
+        title: "Tiny Platformer 98",
+        desc:
+`플랫포머 미니게임 입니다.
+동전을 주워서 깃발까지 가세요.
+
+조작:
+- 이동: ←/→ 또는 A/D
+- 점프: Space 또는 ↑ 또는 W
+- 리셋: R`,
+        start: (canvas, statusEl) => createPlatformer98(canvas, statusEl)
+      },
+      {
+        id: "inv98",
+        title: "Space Invaders 98",
+        desc:
+`우주선 미니게임 입니다.
+전부 쏴 맞춰서 당신의 위엄을 보여주시죠.
+
+조작:
+- 이동: ←/→ 또는 A/D
+- 발사: Space (또는 ↑/W)
+- 리셋: R`,
+        start: (canvas, statusEl) => createInvaders98(canvas, statusEl)
+      }
+    ];
+
+    let currentGame = null;
+    let selectedGameIndex = 0;
+    let gamePaused = false;
+    let gameFocus = false;
+
+    const gameKeys = { left:false, right:false, jump:false };
+
+    function setGameStatus(text){
+      const el = document.getElementById('gameStatus');
+      if(el) el.textContent = text;
+    }
+    function syncGamePauseButton(){
+      const btn = document.getElementById('btnGamePause');
+      if(!btn) return;
+      btn.textContent = gamePaused ? "Resume" : "Pause";
+    }
+
+    function renderGameList(){
+      const ul = document.getElementById('gameList');
+      if(!ul) return;
+      ul.innerHTML = "";
+
+      games.forEach((g, idx)=>{
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = "#";
+        a.textContent = g.title;
+        a.onclick = (e)=>{
+          e.preventDefault();
+          selectGame(idx);
+        };
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+    }
+
+    function stopCurrentGame(){
+      if(currentGame && currentGame.stop) currentGame.stop();
+      currentGame = null;
+    }
+
+    function selectGame(index){
+      selectedGameIndex = index;
+      const g = games[index];
+
+      document.getElementById('gameTitle').textContent = g?.title ?? "선택한 게임";
+      document.getElementById('gameDesc').textContent = g?.desc ?? "";
+      document.getElementById('gameWinTitle').textContent = g?.title ?? "게임 실행기";
+
+      stopCurrentGame();
+      gamePaused = false;
+      syncGamePauseButton();
+
+      const canvas = document.getElementById('gameCanvas');
+      const statusEl = document.getElementById('gameStatus');
+
+      if(!g || !g.start){
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#0f0";
+        ctx.font = "12px Lucida Console, Monaco, monospace";
+        ctx.fillText("준비중...", 10, 20);
+        setGameStatus("STOP · 준비중");
+        return;
+      }
+
+      currentGame = g.start(canvas, statusEl);
+      setGameStatus("PLAY · 화면을 클릭하세요");
+    }
+
+    function gameReset(){
+      if(currentGame && currentGame.reset){
+        currentGame.reset();
+        gamePaused = false;
+        if(currentGame.setPaused) currentGame.setPaused(false);
+        syncGamePauseButton();
+        setGameStatus("PLAY · 리셋됨 (화면을 클릭하세요)");
+      }
+    }
+
+    function gameTogglePause(){
+      if(!currentGame || !currentGame.setPaused) return;
+      gamePaused = !gamePaused;
+      currentGame.setPaused(gamePaused);
+      syncGamePauseButton();
+      setGameStatus((gamePaused ? "PAUSE" : "PLAY") + " · " + (gamePaused ? "일시정지" : "재개"));
+    }
+
+    function isTypingInUI(){
+      const ae = document.activeElement;
+      if(!ae) return false;
+      const tag = (ae.tagName || "").toUpperCase();
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+    }
+
+    function hookGameInput(){
+      const canvas = document.getElementById('gameCanvas');
+      if(!canvas) return;
+
+      // “화면 클릭”로 활성화
+      canvas.addEventListener('mousedown', ()=>{
+        gameFocus = true;
+        canvas.focus();
+        setGameStatus((gamePaused ? "PAUSE" : "PLAY") + " · 화면을 클릭했습니다");
+      });
+
+      document.addEventListener('mousedown', (e)=>{
+        if(!canvas.contains(e.target)) gameFocus = false;
+      });
+
+      function setKey(key, down){
+        if(key === "left") gameKeys.left = down;
+        if(key === "right") gameKeys.right = down;
+        if(key === "jump") gameKeys.jump = down;
+        if(currentGame && currentGame.setInput){
+          currentGame.setInput(gameKeys);
+        }
+      }
+
+      document.addEventListener('keydown', (e)=>{
+        if(!currentGame || !gameFocus) return;
+        if(isTypingInUI()) return;
+
+        const selectedTab = document.querySelector('#tabs li[role="tab"][aria-selected="true"] a');
+        if(selectedTab && selectedTab.dataset.tab !== 'project') return;
+
+        if(e.key === "ArrowLeft" || e.key === "a" || e.key === "A"){ e.preventDefault(); setKey("left", true); }
+        if(e.key === "ArrowRight" || e.key === "d" || e.key === "D"){ e.preventDefault(); setKey("right", true); }
+        if(e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " "){ e.preventDefault(); setKey("jump", true); }
+        if(e.key === "r" || e.key === "R"){ e.preventDefault(); gameReset(); }
+      }, { passive:false });
+
+      document.addEventListener('keyup', (e)=>{
+        if(!currentGame) return;
+        if(e.key === "ArrowLeft" || e.key === "a" || e.key === "A"){ setKey("left", false); }
+        if(e.key === "ArrowRight" || e.key === "d" || e.key === "D"){ setKey("right", false); }
+        if(e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " "){ setKey("jump", false); }
+      });
+    }
+
+    /* -------------------------
+       Tiny Platformer 98 
+    ------------------------- */
+    function createPlatformer98(canvas, statusEl){
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+
+      const W = canvas.width;
+      const H = canvas.height;
+
+      const worldW = 3400;
+      const groundY = 240;
+
+      const GRAV = 1800;
+      const SPEED = 190;
+      const JUMP  = 520;
+
+      let paused = false;
+      let raf = 0;
+      let tPrev = 0;
+
+      const solids = [];
+      const coins = [];
+      const enemies = [];
+
+      solids.push({x:0, y:groundY, w:worldW, h:H-groundY});
+
+      solids.push({x:220, y:200, w:140, h:16});
+      solids.push({x:520, y:176, w:120, h:16});
+      solids.push({x:820, y:210, w:160, h:16});
+      solids.push({x:1120, y:188, w:140, h:16});
+      solids.push({x:1480, y:212, w:120, h:16});
+      solids.push({x:1780, y:170, w:150, h:16});
+      solids.push({x:2100, y:204, w:200, h:16});
+      solids.push({x:2460, y:180, w:140, h:16});
+      solids.push({x:2780, y:210, w:160, h:16});
+
+      const coinPts = [
+        [260,170],[560,145],[870,180],[1180,155],[1520,180],
+        [1840,135],[2170,170],[2520,145],[2870,180],[3100,190]
+      ];
+      coinPts.forEach(([x,y])=> coins.push({x,y,r:6, got:false}));
+
+      enemies.push({x:980, y:groundY-14, w:18, h:12, vx:60, dead:false});
+      enemies.push({x:2320, y:groundY-14, w:18, h:12, vx:-70, dead:false});
+
+      const goal = {x: worldW-90, y: groundY-70, w: 16, h: 70};
+
+      let camX = 0;
+      let score = 0;
+      let time = 0;
+
+      let input = { left:false, right:false, jump:false };
+      let prevJump = false;
+      let coyote = 0;
+
+      const player = {
+        x: 60, y: groundY-18,
+        w: 14, h: 18,
+        vx: 0, vy: 0,
+        onGround: false
+      };
+
+      const clouds = [];
+      for(let i=0;i<12;i++){
+        clouds.push({
+          x: i*280 + (i%3)*60,
+          y: 24 + (i%4)*14,
+          w: 60 + (i%3)*18,
+          h: 14 + (i%2)*6,
+          s: 0.18 + (i%5)*0.03
+        });
+      }
+
+      function aabb(ax,ay,aw,ah,b){
+        return ax < b.x + b.w && ax + aw > b.x && ay < b.y + b.h && ay + ah > b.y;
+      }
+
+      function moveAndCollide(dx, dy){
+        player.x += dx;
+        for(const s of solids){
+          if(aabb(player.x, player.y, player.w, player.h, s)){
+            if(dx > 0) player.x = s.x - player.w;
+            else if(dx < 0) player.x = s.x + s.w;
+            player.vx = 0;
+          }
+        }
+
+        player.y += dy;
+        player.onGround = false;
+        for(const s of solids){
+          if(aabb(player.x, player.y, player.w, player.h, s)){
+            if(dy > 0){
+              player.y = s.y - player.h;
+              player.vy = 0;
+              player.onGround = true;
+            }else if(dy < 0){
+              player.y = s.y + s.h;
+              player.vy = 0;
+            }
+          }
+        }
+      }
+
+      function reset(){
+        player.x = 60;
+        player.y = groundY-18;
+        player.vx = 0;
+        player.vy = 0;
+        player.onGround = false;
+        camX = 0;
+        score = 0;
+        time = 0;
+        coyote = 0;
+        prevJump = false;
+
+        coins.forEach(c => c.got = false);
+        enemies.forEach(e => { e.dead = false; });
+
+        draw(true);
+        status();
+      }
+
+      function status(extra){
+        const mm = String(Math.floor(time/60)).padStart(2,'0');
+        const ss = String(Math.floor(time%60)).padStart(2,'0');
+        statusEl.textContent = `SCORE ${score} · TIME ${mm}:${ss}` + (extra ? ` · ${extra}` : "");
+      }
+
+      function update(dt){
+        time += dt;
+
+        if(input.left && !input.right) player.vx = -SPEED;
+        else if(input.right && !input.left) player.vx = SPEED;
+        else player.vx = 0;
+
+        player.vy += GRAV * dt;
+        if(player.vy > 900) player.vy = 900;
+
+        if(player.onGround) coyote = 0.10;
+        else coyote = Math.max(0, coyote - dt);
+
+        const jumpPressed = input.jump && !prevJump;
+        prevJump = input.jump;
+
+        if(jumpPressed && (player.onGround || coyote > 0)){
+          player.vy = -JUMP;
+          player.onGround = false;
+          coyote = 0;
+        }
+
+        moveAndCollide(player.vx*dt, player.vy*dt);
+
+        if(player.y > H + 120){
+          reset();
+          status("RESET (낙사)");
+          return;
+        }
+
+        for(const c of coins){
+          if(c.got) continue;
+          const bx = c.x - c.r, by = c.y - c.r, bw = c.r*2, bh = c.r*2;
+          if(aabb(player.x, player.y, player.w, player.h, {x:bx,y:by,w:bw,h:bh})){
+            c.got = true;
+            score += 1;
+          }
+        }
+
+        for(const e of enemies){
+          if(e.dead) continue;
+          if(aabb(player.x, player.y, player.w, player.h, e)){
+            const playerBottom = player.y + player.h;
+            const stomp = player.vy > 0 && playerBottom - 4 < e.y + 2;
+            if(stomp){
+              e.dead = true;
+              player.vy = -JUMP * 0.55;
+              score += 2;
+            }else{
+              reset();
+              status("RESET (적)");
+              return;
+            }
+          }
+        }
+
+        if(aabb(player.x, player.y, player.w, player.h, goal)){
+          paused = true;
+          gamePaused = true;
+          syncGamePauseButton();
+          status("CLEAR! (리셋해서 다시)");
+        }
+
+        camX = player.x - W*0.5;
+        if(camX < 0) camX = 0;
+        if(camX > worldW - W) camX = worldW - W;
+
+        status();
+      }
+
+      function draw(oneShot){
+        ctx.fillStyle = "#5bb4ff";
+        ctx.fillRect(0,0,W,H);
+
+        for(const cl of clouds){
+          const x = (cl.x - camX*cl.s);
+          const y = cl.y;
+          ctx.fillStyle = "rgba(255,255,255,0.9)";
+          ctx.fillRect(Math.floor(x), Math.floor(y), cl.w, cl.h);
+          ctx.fillRect(Math.floor(x+10), Math.floor(y-6), cl.w-18, cl.h);
+          ctx.fillStyle = "rgba(0,0,0,0.08)";
+          ctx.fillRect(Math.floor(x), Math.floor(y+cl.h), cl.w, 2);
+        }
+
+        for(const s of solids){
+          const sx = Math.floor(s.x - camX);
+          if(sx + s.w < -40 || sx > W + 40) continue;
+
+          ctx.fillStyle = "#c0c0c0";
+          ctx.fillRect(sx, s.y, s.w, Math.min(6, s.h));
+          ctx.fillStyle = "#808080";
+          ctx.fillRect(sx, s.y + Math.min(6,s.h), s.w, s.h - Math.min(6,s.h));
+          ctx.strokeStyle = "#000";
+          ctx.strokeRect(sx+0.5, s.y+0.5, s.w-1, s.h-1);
+
+          ctx.fillStyle = "rgba(255,255,255,0.10)";
+          for(let i=0;i<s.w;i+=8){
+            ctx.fillRect(sx+i, s.y+8, 2, 2);
+          }
+        }
+
+        const gx = Math.floor(goal.x - camX);
+        ctx.strokeStyle = "#000";
+        ctx.beginPath();
+        ctx.moveTo(gx+8, goal.y);
+        ctx.lineTo(gx+8, goal.y+goal.h);
+        ctx.stroke();
+        ctx.fillStyle = "#ff0000";
+        ctx.fillRect(gx+8, goal.y+6, 14, 10);
+        ctx.strokeStyle = "#000";
+        ctx.strokeRect(gx+8+0.5, goal.y+6+0.5, 14-1, 10-1);
+
+        for(const c of coins){
+          if(c.got) continue;
+          const cx = Math.floor(c.x - camX);
+          ctx.fillStyle = "#ffd800";
+          ctx.beginPath();
+          ctx.arc(cx, c.y, c.r, 0, Math.PI*2);
+          ctx.fill();
+          ctx.strokeStyle = "#000";
+          ctx.stroke();
+          ctx.fillStyle = "rgba(255,255,255,0.6)";
+          ctx.fillRect(cx-2, c.y-3, 2, 2);
+        }
+
+        for(const e of enemies){
+          if(e.dead) continue;
+          const ex = Math.floor(e.x - camX);
+          ctx.fillStyle = "#00aa66";
+          ctx.fillRect(ex, e.y, e.w, e.h);
+          ctx.strokeStyle = "#000";
+          ctx.strokeRect(ex+0.5, e.y+0.5, e.w-1, e.h-1);
+          ctx.fillStyle = "#000";
+          ctx.fillRect(ex+5, e.y+4, 2, 2);
+          ctx.fillRect(ex+11, e.y+4, 2, 2);
+        }
+
+        const px = Math.floor(player.x - camX);
+        ctx.fillStyle = "#0000aa";
+        ctx.fillRect(px, player.y, player.w, player.h);
+        ctx.strokeStyle = "#000";
+        ctx.strokeRect(px+0.5, player.y+0.5, player.w-1, player.h-1);
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.fillRect(px+2, player.y+2, 3, 3);
+
+        if(!oneShot && !gameFocus){
+          ctx.fillStyle = "rgba(0,0,0,0.45)";
+          ctx.fillRect(10, 10, 220, 36);
+          ctx.fillStyle = "#fff";
+          ctx.font = "12px Lucida Console, Monaco, monospace";
+          ctx.fillText("화면을 클릭하세요", 18, 30);
+        }
+      }
+
+      function loop(ts){
+        raf = requestAnimationFrame(loop);
+        if(!tPrev) tPrev = ts;
+        const dt = Math.min(0.033, (ts - tPrev) / 1000);
+        tPrev = ts;
+
+        if(!paused){
+          update(dt);
+        }
+        draw(false);
+      }
+
+      function setPaused(p){ paused = !!p; }
+      function setInput(keys){ input = { ...keys }; }
+      function stop(){ cancelAnimationFrame(raf); }
+
+      reset();
+      paused = false;
+      tPrev = 0;
+      raf = requestAnimationFrame(loop);
+
+      return { reset, stop, setPaused, setInput };
+    }
+
+    /* -------------------------
+       Space Invaders 98
+    ------------------------- */
+    function createInvaders98(canvas, statusEl){
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+
+      const W = canvas.width;
+      const H = canvas.height;
+
+      let paused = false;
+      let raf = 0;
+      let tPrev = 0;
+
+      let input = { left:false, right:false, jump:false };
+      let prevFire = false;
+
+      const stars = Array.from({length:60}, (_,i)=>({
+        x: Math.floor((i*73) % W),
+        y: Math.floor((i*41) % H),
+        s: 1 + (i%2)
+      }));
+
+      const player = { x: Math.floor(W/2), y: H-22, w: 18, h: 8, speed: 200 };
+      let lives = 3;
+      let score = 0;
+
+      let fireCd = 0;
+      const pBullets = [];
+      const eBullets = [];
+
+      let fleetX = 46, fleetY = 42;
+      let dir = 1;
+      let fleetSpeed = 28;
+      const stepDown = 10;
+
+      const inv = [];
+      const cols = 9, rows = 4;
+      const cellX = 26, cellY = 18;
+      const invW = 16, invH = 10;
+
+      function spawnFleet(){
+        inv.length = 0;
+        for(let r=0;r<rows;r++){
+          for(let c=0;c<cols;c++){
+            inv.push({ c, r, alive:true });
+          }
+        }
+        fleetX = 46; fleetY = 42;
+        dir = 1;
+        fleetSpeed = 28;
+      }
+
+      function reset(){
+        lives = 3;
+        score = 0;
+        player.x = Math.floor(W/2);
+        pBullets.length = 0;
+        eBullets.length = 0;
+        fireCd = 0;
+        prevFire = false;
+        spawnFleet();
+        paused = false;
+        status("PLAY · 화면을 클릭하세요");
+        draw(true);
+      }
+
+      function status(extra){
+        statusEl.textContent = `SCORE ${score} · LIVES ${lives}` + (extra ? ` · ${extra}` : "");
+      }
+
+      function aliveCount(){
+        let n = 0;
+        for(const a of inv) if(a.alive) n++;
+        return n;
+      }
+
+      function fleetBounds(){
+        let minX = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for(const a of inv){
+          if(!a.alive) continue;
+          const x = fleetX + a.c*cellX;
+          const y = fleetY + a.r*cellY;
+          minX = Math.min(minX, x);
+          maxX = Math.max(maxX, x + invW);
+          maxY = Math.max(maxY, y + invH);
+        }
+        if(minX === Infinity) return {minX:0,maxX:0,maxY:0};
+        return {minX, maxX, maxY};
+      }
+
+      let enemyFireTimer = 0;
+
+      function update(dt){
+        if(input.left && !input.right) player.x -= player.speed * dt;
+        else if(input.right && !input.left) player.x += player.speed * dt;
+
+        const margin = 8;
+        if(player.x < margin) player.x = margin;
+        if(player.x > W - margin - player.w) player.x = W - margin - player.w;
+
+        fireCd = Math.max(0, fireCd - dt);
+        const firePressed = input.jump && !prevFire;
+        prevFire = input.jump;
+
+        if(firePressed && fireCd <= 0){
+          pBullets.push({ x: player.x + Math.floor(player.w/2) - 1, y: player.y - 6, vy: -320 });
+          fireCd = 0.18;
+        }
+
+        fleetX += dir * fleetSpeed * dt;
+        const b = fleetBounds();
+        if(b.minX < 8 || b.maxX > W - 8){
+          dir *= -1;
+          fleetY += stepDown;
+          fleetSpeed += 3;
+        }
+
+        if(b.maxY > player.y - 8){
+          paused = true;
+          gamePaused = true;
+          syncGamePauseButton();
+          status("GAME OVER (리셋)");
+        }
+
+        enemyFireTimer += dt;
+        const alive = inv.filter(a=>a.alive);
+        if(alive.length > 0 && enemyFireTimer > 0.75){
+          enemyFireTimer = 0;
+          const pick = alive[Math.floor(Math.random()*alive.length)];
+          const ex = fleetX + pick.c*cellX + Math.floor(invW/2);
+          const ey = fleetY + pick.r*cellY + invH + 2;
+          eBullets.push({ x: ex, y: ey, vy: 220 + Math.min(180, score*2) });
+        }
+
+        for(const bb of pBullets) bb.y += bb.vy * dt;
+        for(const bb of eBullets) bb.y += bb.vy * dt;
+
+        for(let i=pBullets.length-1;i>=0;i--){
+          if(pBullets[i].y < -20) pBullets.splice(i,1);
+        }
+        for(let i=eBullets.length-1;i>=0;i--){
+          if(eBullets[i].y > H+20) eBullets.splice(i,1);
+        }
+
+        for(let i=pBullets.length-1;i>=0;i--){
+          const pb = pBullets[i];
+          let hit = false;
+
+          for(const a of inv){
+            if(!a.alive) continue;
+            const ax = fleetX + a.c*cellX;
+            const ay = fleetY + a.r*cellY;
+            if(pb.x >= ax && pb.x <= ax+invW && pb.y >= ay && pb.y <= ay+invH){
+              a.alive = false;
+              hit = true;
+              score += 10;
+              break;
+            }
+          }
+          if(hit) pBullets.splice(i,1);
+        }
+
+        for(let i=eBullets.length-1;i>=0;i--){
+          const eb = eBullets[i];
+          if(
+            eb.x >= player.x && eb.x <= player.x + player.w &&
+            eb.y >= player.y && eb.y <= player.y + player.h
+          ){
+            eBullets.splice(i,1);
+            lives -= 1;
+
+            if(lives <= 0){
+              paused = true;
+              gamePaused = true;
+              syncGamePauseButton();
+              status("GAME OVER (리셋)");
+            }else{
+              player.x = Math.floor(W/2);
+              pBullets.length = 0;
+              fireCd = 0;
+              status("HIT!");
+            }
+          }
+        }
+
+        if(aliveCount() === 0){
+          paused = true;
+          gamePaused = true;
+          syncGamePauseButton();
+          status("CLEAR! (리셋해서 다시)");
+        }
+
+        status();
+      }
+
+      function draw(oneShot){
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0,W,H);
+
+        ctx.fillStyle = "rgba(255,255,255,0.8)";
+        for(const s of stars){
+          ctx.fillRect(s.x, s.y, s.s, s.s);
+        }
+
+        for(const a of inv){
+          if(!a.alive) continue;
+          const ax = Math.floor(fleetX + a.c*cellX);
+          const ay = Math.floor(fleetY + a.r*cellY);
+          ctx.fillStyle = "#00ff66";
+          ctx.fillRect(ax, ay, invW, invH);
+          ctx.strokeStyle = "#000";
+          ctx.strokeRect(ax+0.5, ay+0.5, invW-1, invH-1);
+          ctx.fillStyle = "#000";
+          ctx.fillRect(ax+4, ay+3, 2, 2);
+          ctx.fillRect(ax+10, ay+3, 2, 2);
+        }
+
+        ctx.fillStyle = "#00aaff";
+        ctx.fillRect(Math.floor(player.x), player.y, player.w, player.h);
+        ctx.strokeStyle = "#000";
+        ctx.strokeRect(Math.floor(player.x)+0.5, player.y+0.5, player.w-1, player.h-1);
+
+        ctx.fillStyle = "#fff";
+        for(const bb of pBullets){
+          ctx.fillRect(Math.floor(bb.x), Math.floor(bb.y), 2, 6);
+        }
+        ctx.fillStyle = "#ffd800";
+        for(const bb of eBullets){
+          ctx.fillRect(Math.floor(bb.x), Math.floor(bb.y), 2, 6);
+        }
+
+        if(!oneShot && !gameFocus){
+          ctx.fillStyle = "rgba(0,0,0,0.55)";
+          ctx.fillRect(10, 10, 220, 36);
+          ctx.fillStyle = "#fff";
+          ctx.font = "12px Lucida Console, Monaco, monospace";
+          ctx.fillText("화면을 클릭하세요", 18, 30);
+        }
+      }
+
+      function loop(ts){
+        raf = requestAnimationFrame(loop);
+        if(!tPrev) tPrev = ts;
+        const dt = Math.min(0.033, (ts - tPrev) / 1000);
+        tPrev = ts;
+
+        if(!paused) update(dt);
+        draw(false);
+      }
+
+      function setPaused(p){ paused = !!p; }
+      function setInput(keys){ input = { ...keys }; }
+      function stop(){ cancelAnimationFrame(raf); }
+
+      reset();
+      tPrev = 0;
+      raf = requestAnimationFrame(loop);
+
+      return { reset, stop, setPaused, setInput };
+    }
+
+    /* -------------------------
+       초기화
+    ------------------------- */
+    window.addEventListener('load', ()=>{
+      const wp = localStorage.getItem('jsp275_wallpaper');
+      if(wp){
+        document.getElementById('wallpaperSel').value = wp;
+        applyWallpaper(wp);
+      }
+
+      renderPostList();
+      loadTodos();
+      loadNote();
+      initCanvas();
+
+      document.querySelectorAll('.floating').forEach(makeDraggable);
+      makeDraggable(document.getElementById('dialogWin'));
+
+      trackSelect.innerHTML = tracks.map((t, i) => `<option value="${i}">${t.title}</option>`).join('');
+      audio.volume = Number(volBar.value) / 100;
+      loadTrack(0);
+
+      loadGiscus();
+
+      // 게임 런처 init
+      renderGameList();
+      hookGameInput();
+      selectGame(0);
+
+      // 온라인 접속자 카운터 init
+      initOnlineCounter();
+    });
+  </script>
+</body>
+</html>
